@@ -82,10 +82,14 @@ fun RichInsightsNavigation() {
                 .padding(paddingValues),
             onBack = { backStack.removeLastOrNull() },
             entryProvider = { key ->
-                NavEntry(key) {
-                    RichInsightsDestinationPlaceholder(
-                        destination = key,
-                    )
+                when (key) {
+                    is RichInsightsDestination -> NavEntry(key) {
+                        RichInsightsDestinationPlaceholder(
+                            destination = key,
+                        )
+                    }
+
+                    else -> error("Unsupported navigation key: $key")
                 }
             },
         )
