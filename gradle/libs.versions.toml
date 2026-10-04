@@ -5,6 +5,8 @@ composeBom = "2026.09.00"
 activityCompose = "1.13.0"
 navigation3 = "1.1.7"
 kotlinSerializationJson = "1.10.0"
+coreSplashscreen = "1.2.0"
+datastore = "1.2.1"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -20,4 +22,6 @@ androidxComposeUiToolingPreview = { module = "androidx.compose.ui:ui-tooling-pre
 androidxComposeUiTooling = { module = "androidx.compose.ui:ui-tooling" }
 androidxNavigation3Runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 androidxNavigation3Ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+androidxCoreSplashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidxDataStorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerializationJson" }
