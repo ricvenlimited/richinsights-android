@@ -197,9 +197,11 @@ private fun RichInsightsWordmark(
 ) {
     val density = LocalDensity.current
     var firstDotX by remember { mutableFloatStateOf(Float.NaN) }
+    var firstDotY by remember { mutableFloatStateOf(Float.NaN) }
     var firstPieceWidth by remember { mutableFloatStateOf(0f) }
     var middlePieceWidth by remember { mutableFloatStateOf(0f) }
     var secondDotOffsetX by remember { mutableFloatStateOf(Float.NaN) }
+    var secondDotY by remember { mutableFloatStateOf(Float.NaN) }
 
     val wordmarkStyle = TextStyle(
         fontFamily = PlusJakartaSans,
@@ -224,6 +226,7 @@ private fun RichInsightsWordmark(
                 onTextLayout = { layout ->
                     val bounds = layout.getBoundingBox(1)
                     firstDotX = (bounds.left + bounds.right) / 2f
+                    firstDotY = bounds.top + bounds.height * 0.08f
                     firstPieceWidth = layout.size.width.toFloat()
                 },
             )
@@ -247,25 +250,25 @@ private fun RichInsightsWordmark(
                     val bounds = layout.getBoundingBox(2)
                     secondDotOffsetX = firstPieceWidth + middlePieceWidth +
                         (bounds.left + bounds.right) / 2f
+                    secondDotY = bounds.top + bounds.height * 0.08f
                 },
             )
         }
 
         Canvas(modifier = Modifier.matchParentSize()) {
             val radius = with(density) { 3.4.dp.toPx() }
-            val centerY = with(density) { 10.6.dp.toPx() }
             if (firstDotX.isFinite()) {
                 drawCircle(
                     color = WarmGold,
                     radius = radius,
-                    center = Offset(firstDotX, centerY),
+                    center = Offset(firstDotX, firstDotY),
                 )
             }
             if (secondDotOffsetX.isFinite()) {
                 drawCircle(
                     color = WarmGold,
                     radius = radius,
-                    center = Offset(secondDotOffsetX, centerY),
+                    center = Offset(secondDotOffsetX, secondDotY),
                 )
             }
         }
