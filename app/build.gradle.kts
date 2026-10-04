@@ -19,7 +19,27 @@ android {
     buildFeatures {
         compose = true
     }
+
+    sourceSets.getByName("main").res.srcDir(layout.buildDirectory.dir("generated/res/plusJakartaSans/main"))
 }
+
+val generatedFontResDir = layout.buildDirectory.dir("generated/res/plusJakartaSans/main")
+val fontWeights = listOf("regular", "semibold", "bold")
+val generateBundledFonts by tasks.registering {
+    val encodedFonts = fontWeights.map { layout.projectDirectory.file("gradle/fonts/plus_jakarta_sans_$it.ttf.base64") }
+    inputs.files(encodedFonts)
+    outputs.dir(generatedFontResDir)
+    doLast {
+        val fontDir = generatedFontResDir.get().dir("font").asFile
+        fontDir.mkdirs()
+        fontWeights.forEach { weight ->
+            val encoded = layout.projectDirectory.file("gradle/fonts/plus_jakarta_sans_$weight.ttf.base64").asFile.readText()
+            val decoded = java.util.Base64.getMimeDecoder().decode(encoded)
+            fontDir.resolve("plus_jakarta_sans_$weight.ttf").writeBytes(decoded)
+        }
+    }
+}
+tasks.named("preBuild").configure { dependsOn(generateBundledFonts) }
 
 dependencies {
     implementation(platform(libs.androidxComposeBom))
@@ -31,6 +51,8 @@ dependencies {
     implementation(libs.androidxComposeUiToolingPreview)
     implementation(libs.androidxNavigation3Runtime)
     implementation(libs.androidxNavigation3Ui)
+    implementation(libs.androidxCoreSplashscreen)
+    implementation(libs.androidxDataStorePreferences)
     implementation(libs.kotlinxSerializationJson)
 
     debugImplementation(libs.androidxComposeUiTooling)
