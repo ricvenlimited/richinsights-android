@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,15 +29,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.customActions
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -63,23 +57,17 @@ private val PlusJakartaSans = FontFamily(
 
 @Composable
 fun BrandIntroOverlay(
+    onSequenceCompleted: suspend () -> Unit,
     onFinished: () -> Unit,
 ) {
-    val markScale = remember { Animatable(1f) }
-    val markOffsetY = remember { Animatable(0f) }
-    val wordmarkAlpha = remember { Animatable(0f) }
-    val taglineAlpha = remember { Animatable(0f) }
-    val overlayAlpha = remember { Animatable(1f) }
-    var completed by remember { mutableStateOf(false) }
+    val markScale = androidx.compose.runtime.remember { Animatable(1f) }
+    val markOffsetY = androidx.compose.runtime.remember { Animatable(0f) }
+    val wordmarkAlpha = androidx.compose.runtime.remember { Animatable(0f) }
+    val taglineAlpha = androidx.compose.runtime.remember { Animatable(0f) }
+    val overlayAlpha = androidx.compose.runtime.remember { Animatable(1f) }
 
-    fun finishNow() {
-        if (!completed) {
-            completed = true
-            onFinished()
-        }
-    }
-
-    BackHandler(enabled = true) { finishNow() }
+    // Consume system Back without dismissing or shortening the compulsory intro.
+    BackHandler(enabled = true) {}
 
     LaunchedEffect(Unit) {
         delay(400)
@@ -101,16 +89,22 @@ fun BrandIntroOverlay(
                 animationSpec = tween(500, easing = FastOutSlowInEasing),
             )
         }
+
         delay(500)
         taglineAlpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(400, easing = FastOutSlowInEasing),
         )
+
+        // Save only after every designed stage has completed. If persistence fails,
+        // the final brand frame stays visible and Home remains locked.
+        onSequenceCompleted()
+
         overlayAlpha.animateTo(
             targetValue = 0f,
             animationSpec = tween(200, easing = FastOutSlowInEasing),
         )
-        finishNow()
+        onFinished()
     }
 
     val density = LocalDensity.current
@@ -118,18 +112,7 @@ fun BrandIntroOverlay(
         modifier = Modifier
             .fillMaxSize()
             .background(DeepNavy)
-            .alpha(overlayAlpha.value)
-            .pointerInput(Unit) {
-                detectTapGestures { finishNow() }
-            }
-            .semantics {
-                customActions = listOf(
-                    CustomAccessibilityAction("Skip intro") {
-                        finishNow()
-                        true
-                    },
-                )
-            },
+            .alpha(overlayAlpha.value),
     ) {
         Image(
             painter = painterResource(R.drawable.ic_splash_mark),
@@ -150,7 +133,9 @@ fun BrandIntroOverlay(
                 .offset(y = 54.dp)
                 .alpha(wordmarkAlpha.value),
         ) {
-            var wordmarkWidthPx by remember { mutableFloatStateOf(0f) }
+            var wordmarkWidthPx by androidx.compose.runtime.remember {
+                mutableFloatStateOf(0f)
+            }
             val maxWordmarkWidthPx = with(density) { (maxWidth * 0.66f).toPx() }
             val horizontalScale = if (wordmarkWidthPx > 0f) {
                 minOf(1f, maxWordmarkWidthPx / wordmarkWidthPx)
@@ -196,12 +181,24 @@ private fun RichInsightsWordmark(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-    var firstDotX by remember { mutableFloatStateOf(Float.NaN) }
-    var firstDotY by remember { mutableFloatStateOf(Float.NaN) }
-    var firstPieceWidth by remember { mutableFloatStateOf(0f) }
-    var middlePieceWidth by remember { mutableFloatStateOf(0f) }
-    var secondDotOffsetX by remember { mutableFloatStateOf(Float.NaN) }
-    var secondDotY by remember { mutableFloatStateOf(Float.NaN) }
+    var firstDotX by androidx.compose.runtime.remember {
+        mutableFloatStateOf(Float.NaN)
+    }
+    var firstDotY by androidx.compose.runtime.remember {
+        mutableFloatStateOf(Float.NaN)
+    }
+    var firstPieceWidth by androidx.compose.runtime.remember {
+        mutableFloatStateOf(0f)
+    }
+    var middlePieceWidth by androidx.compose.runtime.remember {
+        mutableFloatStateOf(0f)
+    }
+    var secondDotOffsetX by androidx.compose.runtime.remember {
+        mutableFloatStateOf(Float.NaN)
+    }
+    var secondDotY by androidx.compose.runtime.remember {
+        mutableFloatStateOf(Float.NaN)
+    }
 
     val wordmarkStyle = TextStyle(
         fontFamily = PlusJakartaSans,
