@@ -5,8 +5,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,81 +17,40 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.drawCircle
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.toSize
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.platform.LocalAccessibilityManager
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawCircle
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.text.font.FontSynthesis
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontVariation
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.isSpecified
-import androidx.compose.ui.unit.isUnspecified
-import androidx.compose.ui.graphics.CompositingStrategy
+import com.ricven.richinsights.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import com.ricven.richinsights.R
 
 private val DeepNavy = Color(0xFF102A43)
 private val ElectricCyan = Color(0xFF19B5FE)
@@ -112,7 +71,6 @@ fun BrandIntroOverlay(
     val taglineAlpha = remember { Animatable(0f) }
     val overlayAlpha = remember { Animatable(1f) }
     var completed by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
 
     fun finishNow() {
         if (!completed) {
@@ -148,7 +106,6 @@ fun BrandIntroOverlay(
             targetValue = 1f,
             animationSpec = tween(400, easing = FastOutSlowInEasing),
         )
-        delay(400)
         overlayAlpha.animateTo(
             targetValue = 0f,
             animationSpec = tween(200, easing = FastOutSlowInEasing),
@@ -156,6 +113,7 @@ fun BrandIntroOverlay(
         finishNow()
     }
 
+    val density = LocalDensity.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -173,7 +131,7 @@ fun BrandIntroOverlay(
                 )
             },
     ) {
-        androidx.compose.foundation.Image(
+        Image(
             painter = painterResource(R.drawable.ic_splash_mark),
             contentDescription = null,
             modifier = Modifier
@@ -182,11 +140,10 @@ fun BrandIntroOverlay(
                 .graphicsLayer {
                     scaleX = markScale.value
                     scaleY = markScale.value
-                    translationY = markOffsetY.value * density
+                    translationY = with(density) { markOffsetY.value.dp.toPx() }
                 },
         )
 
-        val density = LocalDensity.current
         BoxWithConstraints(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -200,6 +157,7 @@ fun BrandIntroOverlay(
             } else {
                 1f
             }
+
             Box(
                 modifier = Modifier
                     .wrapContentSize()
@@ -210,15 +168,13 @@ fun BrandIntroOverlay(
             ) {
                 RichInsightsWordmark(
                     modifier = Modifier.onSizeChanged { size ->
-                        if (wordmarkWidthPx != size.width.toFloat()) {
-                            wordmarkWidthPx = size.width.toFloat()
-                        }
+                        wordmarkWidthPx = size.width.toFloat()
                     },
                 )
             }
         }
 
-        androidx.compose.material3.Text(
+        Text(
             text = "Grow. Excel.",
             color = ElectricCyan,
             fontFamily = PlusJakartaSans,
@@ -245,7 +201,7 @@ private fun RichInsightsWordmark(
     var middlePieceWidth by remember { mutableFloatStateOf(0f) }
     var secondDotOffsetX by remember { mutableFloatStateOf(Float.NaN) }
 
-    val wordmarkStyle = androidx.compose.ui.text.TextStyle(
+    val wordmarkStyle = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp,
@@ -267,11 +223,8 @@ private fun RichInsightsWordmark(
                 overflow = TextOverflow.Clip,
                 onTextLayout = { layout ->
                     val bounds = layout.getBoundingBox(1)
-                    val x = (bounds.left + bounds.right) / 2f
-                    if (firstDotX != x) firstDotX = x
-                    if (firstPieceWidth != layout.size.width.toFloat()) {
-                        firstPieceWidth = layout.size.width.toFloat()
-                    }
+                    firstDotX = (bounds.left + bounds.right) / 2f
+                    firstPieceWidth = layout.size.width.toFloat()
                 },
             )
             BasicText(
@@ -281,9 +234,7 @@ private fun RichInsightsWordmark(
                 softWrap = false,
                 overflow = TextOverflow.Clip,
                 onTextLayout = { layout ->
-                    if (middlePieceWidth != layout.size.width.toFloat()) {
-                        middlePieceWidth = layout.size.width.toFloat()
-                    }
+                    middlePieceWidth = layout.size.width.toFloat()
                 },
             )
             BasicText(
@@ -294,9 +245,8 @@ private fun RichInsightsWordmark(
                 overflow = TextOverflow.Clip,
                 onTextLayout = { layout ->
                     val bounds = layout.getBoundingBox(2)
-                    val x = firstPieceWidth + middlePieceWidth +
+                    secondDotOffsetX = firstPieceWidth + middlePieceWidth +
                         (bounds.left + bounds.right) / 2f
-                    if (secondDotOffsetX != x) secondDotOffsetX = x
                 },
             )
         }
