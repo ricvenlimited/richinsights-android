@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            var markIntroSeenWithoutShowing = false
             if (introSeen != null) {
                 val animationsDisabled = Settings.Global.getFloat(
                     contentResolver,
@@ -50,8 +51,13 @@ class MainActivity : ComponentActivity() {
                 ) == 0f
 
                 showBrandIntro.value = !introSeen && !animationsDisabled
+                markIntroSeenWithoutShowing = !introSeen && animationsDisabled
+            }
 
-                if (!introSeen && animationsDisabled) {
+            // Never keep the native splash visible while writing preferences.
+            splashStateReady.value = true
+            if (markIntroSeenWithoutShowing) {
+                lifecycleScope.launch {
                     runCatching {
                         richInsightsDataStore.edit { preferences ->
                             preferences[brandIntroSeenKey] = true
@@ -59,8 +65,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-
-            splashStateReady.value = true
         }
 
         setContent {
