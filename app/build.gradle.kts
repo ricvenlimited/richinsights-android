@@ -1,5 +1,3 @@
-import java.util.Base64
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
@@ -21,38 +19,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    sourceSets.getByName("main").res.directories.add(
-        layout.buildDirectory.dir("generated/res/plusJakartaSans/main")
-    )
-}
-
-val generatedFontResDir = layout.buildDirectory.dir("generated/res/plusJakartaSans/main")
-val fontWeights = listOf("regular", "semibold", "bold")
-
-val generateBundledFonts = tasks.register("generateBundledFonts") {
-    val encodedFonts = fontWeights.map {
-        layout.projectDirectory.file("gradle/fonts/plus_jakarta_sans_$it.ttf.base64")
-    }
-    inputs.files(encodedFonts)
-    outputs.dir(generatedFontResDir)
-
-    doLast {
-        val fontDir = generatedFontResDir.get().dir("font").asFile
-        fontDir.mkdirs()
-
-        fontWeights.forEach { weight ->
-            val encodedFile = layout.projectDirectory.file(
-                "gradle/fonts/plus_jakarta_sans_$weight.ttf.base64"
-            ).asFile
-            val decoded = Base64.getMimeDecoder().decode(encodedFile.readText())
-            fontDir.resolve("plus_jakarta_sans_$weight.ttf").writeBytes(decoded)
-        }
-    }
-}
-
-tasks.named("preBuild").configure {
-    dependsOn(generateBundledFonts)
 }
 
 dependencies {
