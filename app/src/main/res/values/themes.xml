@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.RichInsights" parent="android:style/Theme.Material.Light.NoActionBar" />
+    <style name="Theme.RichInsights.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ri_deep_navy</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_mark</item>
+        <item name="postSplashScreenTheme">@style/Theme.RichInsights</item>
+    </style>
 </resources>

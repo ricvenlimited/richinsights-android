@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.androidxComposeUiToolingPreview)
     implementation(libs.androidxNavigation3Runtime)
     implementation(libs.androidxNavigation3Ui)
+    implementation(libs.androidxCoreSplashscreen)
+    implementation(libs.androidxDataStorePreferences)
     implementation(libs.kotlinxSerializationJson)
 
     debugImplementation(libs.androidxComposeUiTooling)
