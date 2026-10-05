@@ -3,9 +3,13 @@ package com.ricven.richinsights
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -18,7 +22,9 @@ import com.ricven.richinsights.ui.splash.BrandIntroOverlay
 import com.ricven.richinsights.ui.theme.RichInsightsTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private val Context.richInsightsDataStore by preferencesDataStore(
     name = "richinsights_settings",
@@ -27,12 +33,16 @@ private val Context.richInsightsDataStore by preferencesDataStore(
 private val brandIntroSeenKey = booleanPreferencesKey("brand_intro_seen")
 
 private enum class StartupState {
-    Intro,
+    DeterminingLaunchMode,
+    FirstLaunchBrand,
+    ReturningLaunchBrand,
     Home,
 }
 
+private val DeepNavy = Color(0xFF102A43)
+
 class MainActivity : ComponentActivity() {
-    private val startupState = mutableStateOf(StartupState.Intro)
+    private val startupState = mutableStateOf(StartupState.DeterminingLaunchMode)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -41,30 +51,46 @@ class MainActivity : ComponentActivity() {
         }
         super.onCreate(savedInstanceState)
 
+        // Do not replay the brand experience for a normal Activity recreation.
+        if (savedInstanceState != null) {
+            startupState.value = StartupState.Home
+        } else {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val launchState = try {
+                    val seen = richInsightsDataStore.data.first()[brandIntroSeenKey] ?: false
+                    if (seen) {
+                        StartupState.ReturningLaunchBrand
+                    } else {
+                        StartupState.FirstLaunchBrand
+                    }
+                } catch (_: Exception) {
+                    // This is non-critical UX state. If the preference cannot be read,
+                    // never block startup; use the shorter recurring experience.
+                    StartupState.ReturningLaunchBrand
+                }
+
+                withContext(Dispatchers.Main.immediate) {
+                    startupState.value = launchState
+                }
+            }
+        }
+
         setContent {
             RichInsightsTheme {
                 when (startupState.value) {
-                    StartupState.Intro -> {
-                        // Back is consumed while the recurring brand intro is playing.
-                        BackHandler(enabled = true) {}
+                    StartupState.DeterminingLaunchMode -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(DeepNavy),
+                        )
+                    }
 
+                    StartupState.FirstLaunchBrand -> {
                         BrandIntroOverlay(
+                            showMark = true,
                             onSequenceCompleted = {
-                                // Persistence is best-effort only. It must never block Home.
-                                lifecycleScope.launch(Dispatchers.IO) {
-                                    repeat(3) { attempt ->
-                                        try {
-                                            richInsightsDataStore.edit { preferences ->
-                                                preferences[brandIntroSeenKey] = true
-                                            }
-                                            return@launch
-                                        } catch (_: Exception) {
-                                            if (attempt < 2) {
-                                                delay(1_000L)
-                                            }
-                                        }
-                                    }
-                                }
+                                persistBrandIntroSeen()
                             },
                             onFinished = {
                                 startupState.value = StartupState.Home
@@ -72,7 +98,34 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
+                    StartupState.ReturningLaunchBrand -> {
+                        BrandIntroOverlay(
+                            showMark = false,
+                            onSequenceCompleted = {},
+                            onFinished = {
+                                startupState.value = StartupState.Home
+                            },
+                        )
+                    }
+
                     StartupState.Home -> RichInsightsNavigation()
+                }
+            }
+        }
+    }
+
+    private fun persistBrandIntroSeen() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            repeat(3) { attempt ->
+                try {
+                    richInsightsDataStore.edit { preferences ->
+                        preferences[brandIntroSeenKey] = true
+                    }
+                    return@launch
+                } catch (_: Exception) {
+                    if (attempt < 2) {
+                        delay(1_000L)
+                    }
                 }
             }
         }
