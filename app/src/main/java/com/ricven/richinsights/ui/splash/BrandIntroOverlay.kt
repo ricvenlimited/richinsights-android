@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ricven.richinsights.R
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val DeepNavy = Color(0xFF102A43)
@@ -56,52 +55,66 @@ private val PlusJakartaSans = FontFamily(
 
 @Composable
 fun BrandIntroOverlay(
+    showMark: Boolean,
     onSequenceCompleted: suspend () -> Unit,
     onFinished: () -> Unit,
 ) {
-    val markScale = androidx.compose.runtime.remember { Animatable(1f) }
-    val markOffsetY = androidx.compose.runtime.remember { Animatable(0f) }
-    val wordmarkAlpha = androidx.compose.runtime.remember { Animatable(0f) }
-    val taglineAlpha = androidx.compose.runtime.remember { Animatable(0f) }
-    val overlayAlpha = androidx.compose.runtime.remember { Animatable(1f) }
+    val markScale = remember { Animatable(1f) }
+    val markOffsetY = remember { Animatable(0f) }
+    val wordmarkAlpha = remember { Animatable(0f) }
+    val taglineAlpha = remember { Animatable(0f) }
+    val overlayAlpha = remember { Animatable(1f) }
 
-    // Consume system Back without dismissing or shortening the compulsory intro.
+    // Back never dismisses or shortens the brand experience.
     BackHandler(enabled = true) {}
 
-    LaunchedEffect(Unit) {
-        delay(400)
-        launch {
-            markScale.animateTo(
-                targetValue = 0.47f,
-                animationSpec = tween(500, easing = FastOutSlowInEasing),
-            )
-        }
-        launch {
-            markOffsetY.animateTo(
-                targetValue = -70f,
-                animationSpec = tween(500, easing = FastOutSlowInEasing),
-            )
-        }
-        launch {
+    LaunchedEffect(showMark) {
+        if (showMark) {
+            // First launch: R establishes the brand before resolving into the wordmark.
+            kotlinx.coroutines.delay(400)
+            launch {
+                markScale.animateTo(
+                    targetValue = 0.47f,
+                    animationSpec = tween(700, easing = FastOutSlowInEasing),
+                )
+            }
+            launch {
+                markOffsetY.animateTo(
+                    targetValue = -70f,
+                    animationSpec = tween(700, easing = FastOutSlowInEasing),
+                )
+            }
+            launch {
+                wordmarkAlpha.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(700, easing = FastOutSlowInEasing),
+                )
+            }
+
+            kotlinx.coroutines.delay(600)
+        } else {
+            // Returning launch: the recurring brand moment starts directly with the wordmark.
             wordmarkAlpha.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(500, easing = FastOutSlowInEasing),
+                animationSpec = tween(700, easing = FastOutSlowInEasing),
             )
+            kotlinx.coroutines.delay(700)
         }
 
-        delay(500)
         taglineAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(400, easing = FastOutSlowInEasing),
+            animationSpec = tween(500, easing = FastOutSlowInEasing),
         )
 
-        // Save only after every designed stage has completed. If persistence fails,
-        // the final brand frame stays visible and Home remains locked.
+        // Hold the completed brand frame briefly so the experience feels intentional
+        // rather than like a technical delay.
+        kotlinx.coroutines.delay(500)
+
         onSequenceCompleted()
 
         overlayAlpha.animateTo(
             targetValue = 0f,
-            animationSpec = tween(200, easing = FastOutSlowInEasing),
+            animationSpec = tween(300, easing = FastOutSlowInEasing),
         )
         onFinished()
     }
@@ -113,26 +126,28 @@ fun BrandIntroOverlay(
             .background(DeepNavy)
             .alpha(overlayAlpha.value),
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_splash_mark),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(288.dp)
-                .graphicsLayer {
-                    scaleX = markScale.value
-                    scaleY = markScale.value
-                    translationY = with(density) { markOffsetY.value.dp.toPx() }
-                },
-        )
+        if (showMark) {
+            Image(
+                painter = painterResource(R.drawable.ic_splash_mark),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(288.dp)
+                    .graphicsLayer {
+                        scaleX = markScale.value
+                        scaleY = markScale.value
+                        translationY = with(density) { markOffsetY.value.dp.toPx() }
+                    },
+            )
+        }
 
         BoxWithConstraints(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = 54.dp)
+                .offset(y = if (showMark) 54.dp else 0.dp)
                 .alpha(wordmarkAlpha.value),
         ) {
-            var wordmarkWidthPx by androidx.compose.runtime.remember {
+            var wordmarkWidthPx by remember {
                 mutableFloatStateOf(0f)
             }
             val maxWordmarkWidthPx = with(density) { (maxWidth * 0.66f).toPx() }
@@ -169,7 +184,7 @@ fun BrandIntroOverlay(
             maxLines = 1,
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = 102.dp)
+                .offset(y = if (showMark) 102.dp else 48.dp)
                 .alpha(taglineAlpha.value),
         )
     }
@@ -180,22 +195,22 @@ private fun RichInsightsWordmark(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-    var firstDotX by androidx.compose.runtime.remember {
+    var firstDotX by remember {
         mutableFloatStateOf(Float.NaN)
     }
-    var firstDotY by androidx.compose.runtime.remember {
+    var firstDotY by remember {
         mutableFloatStateOf(Float.NaN)
     }
-    var firstPieceWidth by androidx.compose.runtime.remember {
+    var firstPieceWidth by remember {
         mutableFloatStateOf(0f)
     }
-    var middlePieceWidth by androidx.compose.runtime.remember {
+    var middlePieceWidth by remember {
         mutableFloatStateOf(0f)
     }
-    var secondDotOffsetX by androidx.compose.runtime.remember {
+    var secondDotOffsetX by remember {
         mutableFloatStateOf(Float.NaN)
     }
-    var secondDotY by androidx.compose.runtime.remember {
+    var secondDotY by remember {
         mutableFloatStateOf(Float.NaN)
     }
 
