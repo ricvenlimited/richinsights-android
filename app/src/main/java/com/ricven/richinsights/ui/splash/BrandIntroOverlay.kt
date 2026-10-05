@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicText
@@ -266,7 +267,7 @@ private fun RichInsightsWordmark(
             )
         }
 
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.matchParentSize()) {
             val radius = with(density) { 3.4.dp.toPx() }
             if (firstDotX.isFinite()) {
                 drawCircle(
