@@ -136,21 +136,11 @@ The icon should primarily use the established visual hierarchy:
 
 Gold should remain an accent rather than becoming the dominant icon color.
 
-### 5.3 Icon concept development
+### 5.3 Icon concept decision
 
-The final icon concept is **not locked yet**.
+**Option C is the selected RichInsights brand/icon direction.** The earlier six-way exploration is no longer an open selection task. Penpot remains the active workspace for retaining and refining the editable source assets.
 
-Before production assets are created, the design process will explore a small number of deliberately different RichInsights symbol directions. Candidate directions may include abstract combinations of:
-- insight/discovery;
-- upward growth;
-- learning/knowledge;
-- a distinctive initial or monogram;
-- layered or dimensional information;
-- a refined symbol that can scale from launcher icon to brand mark.
-
-The goal is not to select a familiar education symbol. The goal is to develop a distinctive RichInsights mark that can represent the broader platform as it expands into learning, quizzes, Bible, news, and future experiences.
-
-The final concept must be approved before the production icon assets are treated as locked.
+The selected direction must remain distinctive, recognizable at launcher size, and consistent with the established palette. Any further refinement should preserve the approved direction rather than reopening concept selection without a clear usability or implementation reason. Validate the final assets across Android adaptive-icon masks and realistic small-size launcher previews before treating every asset variant as complete.
 
 ### 5.4 Adaptive icon requirements
 
@@ -222,7 +212,7 @@ Requirements:
 - remain performant on lower-end Android devices;
 - avoid automatically starting product content or audio during launch.
 
-The exact animation, duration, easing, and transition will be defined after the brand mark is finalized and the Android launch implementation is tested.
+The current Compose launch sequence is implemented and has been verified by the user on a physical Android device. The first-launch experience introduces the mark, resolves into the wordmark, then reveals **Grow. Excel.** The returning-launch experience uses the shorter wordmark/tagline treatment. After the tagline appears, transition directly into the already-composed app shell: do not fade to an empty Deep Navy frame or insert an artificial pause. The final overlay fade is 180 ms, with no additional 500 ms hold after the tagline. Any timing changes must be checked on-device and must not make users wait for decoration.
 
 ### 5.8 Launch implementation boundary
 
@@ -247,32 +237,26 @@ Brand and launch work is divided into deliberate phases:
 - define launch experience;
 - establish asset requirements.
 
-**Phase B — visual exploration**
-- create several candidate brand-mark directions;
-- compare their scalability and distinctiveness;
-- select a direction;
-- refine the selected mark.
+**Phase B — visual exploration (complete for direction selection)**
+- compare the concept directions;
+- select option C as the current approved direction.
 
 **Phase C — production assets**
-- create final launcher/adaptive-icon assets;
-- create required brand/launch assets;
-- verify small-size rendering;
-- verify Android launcher behavior.
+- retain and refine the selected editable/vector artwork;
+- verify adaptive-icon safe areas and small-size rendering;
+- verify launcher behavior across available masks and contexts.
 
-**Phase D — Android integration**
-- add launcher resources;
-- configure the Android application icon;
-- implement the approved splash/launch experience;
-- connect the launch transition to the existing navigation shell.
+**Phase D — Android integration (launch experience implemented)**
+- integrate the brand mark into the Compose launch experience;
+- implement the wordmark/tagline sequence;
+- prepare the app shell behind the overlay;
+- transition directly from the tagline into the app without a blank navy pause.
 
-**Phase E — device verification**
-- build;
-- install;
-- test launch behavior;
-- test icon appearance across available launcher contexts;
-- test different device/window conditions;
-- fix issues;
-- checkpoint.
+**Phase E — device verification (launch flow verified; asset checks remain as applicable)**
+- build and install;
+- test first-launch and returning-launch behavior on a physical device;
+- check launcher icon appearance across available contexts;
+- fix issues and checkpoint.
 
 No production icon or animation should be considered final merely because it looks good in a design canvas. It must also survive actual Android rendering and device testing.
 
@@ -601,11 +585,12 @@ Figma remains available as a reference and possible later design tool. The desig
 
 ## 23. Current V2 design status
 
-- Brand/launch identity planning is established before Firebase integration.
-- **Penpot** is the active design workspace; the existing Figma file remains a reference/archive.
-- Six icon directions remain exploratory; the **RI Monogram** is the leading refinement candidate, but no final brand mark/icon has been approved.
-- Production launcher assets and launch animation remain intentionally unimplemented.
+- **Option C** is the selected RichInsights brand/icon direction; concept selection is no longer pending.
+- **Penpot** is the active editable design workspace; the existing Figma file remains a reference/archive.
+- The Compose brand intro is implemented and has been verified on a physical Android device.
+- The verified launch transition prepares the navigation shell behind the brand overlay, removes the extra 500 ms post-tagline hold, and uses a 180 ms final fade so the app appears directly instead of exposing a blank Deep Navy frame.
+- PR #5, **Fix brand intro to Home transition**, was squash-merged after user verification.
 - The primary navigation shell remains **Home / Learn / Quiz / Bible / News** with Profile & Settings secondary/global.
-- The visual system, adaptive behavior, accessibility requirements, connectivity UX, and commercial UX defined in this document remain the active design direction.
-- Android implementation should follow the Penpot → production-assets → Android → real-device verification workflow documented above.
+- Remaining icon asset/mask checks should be performed as part of the relevant launcher asset validation; they do not block the already-verified launch-flow checkpoint.
+- **Next roadmap step: Firebase foundation**, not full Home-screen design or implementation.
 
