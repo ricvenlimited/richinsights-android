@@ -77,38 +77,44 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RichInsightsTheme {
-                when (startupState.value) {
-                    StartupState.DeterminingLaunchMode -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(DeepNavy),
-                        )
-                    }
+                Box(modifier = Modifier.fillMaxSize()) {
+                    // Prepare the app shell behind the brand overlay so the transition
+                    // never reveals an empty window while navigation is composing.
+                    RichInsightsNavigation()
 
-                    StartupState.FirstLaunchBrand -> {
-                        BrandIntroOverlay(
-                            showMark = true,
-                            onSequenceCompleted = {
-                                persistBrandIntroSeen()
-                            },
-                            onFinished = {
-                                startupState.value = StartupState.Home
-                            },
-                        )
-                    }
+                    when (startupState.value) {
+                        StartupState.DeterminingLaunchMode -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(DeepNavy),
+                            )
+                        }
 
-                    StartupState.ReturningLaunchBrand -> {
-                        BrandIntroOverlay(
-                            showMark = false,
-                            onSequenceCompleted = {},
-                            onFinished = {
-                                startupState.value = StartupState.Home
-                            },
-                        )
-                    }
+                        StartupState.FirstLaunchBrand -> {
+                            BrandIntroOverlay(
+                                showMark = true,
+                                onSequenceCompleted = {
+                                    persistBrandIntroSeen()
+                                },
+                                onFinished = {
+                                    startupState.value = StartupState.Home
+                                },
+                            )
+                        }
 
-                    StartupState.Home -> RichInsightsNavigation()
+                        StartupState.ReturningLaunchBrand -> {
+                            BrandIntroOverlay(
+                                showMark = false,
+                                onSequenceCompleted = {},
+                                onFinished = {
+                                    startupState.value = StartupState.Home
+                                },
+                            )
+                        }
+
+                        StartupState.Home -> Unit
+                    }
                 }
             }
         }
