@@ -327,14 +327,13 @@ The project will continue through the remaining Stage 1 steps once the brand/lau
 **brand/launch work → Firebase foundation → first V2 APK → GitHub checkpoint → Stage 1 checkpoint → Stage 2**.
 
 Current state:
-- the UI/UX documentation has been updated with the brand/launch plan;
-- a dedicated Figma file, **RichInsights — Brand & Icon Concepts**, has been created;
-- the Figma board contains six deliberately different editable concept directions for exploration;
-- no icon concept has been approved as final;
-- no production launcher assets have been integrated into Android yet;
-- the launch animation/storyboard is still conceptual and will be finalized after the brand mark is selected.
+- **Brand/icon direction:** option C has been selected as the RichInsights brand direction.
+- **Launch experience:** the Compose brand intro is integrated and has been tested on a physical Android device.
+- **Launch transition checkpoint:** PR #5 was squash-merged after the user verified the change. The navigation shell is prepared behind the brand overlay, the unnecessary 500 ms post-tagline hold is removed, and the final overlay fade is 180 ms to avoid revealing an empty navy screen.
+- **Documentation checkpoint:** roadmap and UI/UX status are being synchronized with the verified implementation.
+- **Next step:** Firebase foundation, following Stage 1 Step 5. Do not jump ahead to full authentication flows, Firestore content collections, Cloud Functions, quiz data, or production content logic.
 
-This identity checkpoint is a controlled addition to Stage 1. It does not invalidate Steps 1–4 or require the navigation shell to be rebuilt.
+This identity checkpoint is sufficiently settled to resume the planned Stage 1 sequence. It does not invalidate Steps 1–4 or require the navigation shell to be rebuilt.
 
 ### Stage 2 — Platform UI foundation
 - RichInsights visual system
@@ -422,4 +421,10 @@ V2 succeeds when RichInsights has a maintainable native Android foundation with:
 
 ### Current Stage 1 checkpoint
 
-Stage 1 has completed the native project, initial design-system, and navigation-shell foundation work. The current active work is the documented Brand & Launch Identity checkpoint, now continuing in Penpot while the existing Figma work is retained as reference. Firebase remains deliberately unimplemented until that identity work is sufficiently settled. No backend, quiz logic, monetization, or production content has been pulled forward.
+The native project, Gradle foundation, initial design system, and navigation shell are established. The Brand & Launch Identity checkpoint is now sufficiently settled to resume Stage 1 Step 5:
+- selected brand direction: option C;
+- Compose brand intro implemented and physically device-tested;
+- PR #5, **Fix brand intro to Home transition**, squash-merged after user verification;
+- app navigation is composed behind the brand overlay; the extra post-tagline hold was removed and the final fade shortened to 180 ms to avoid a blank navy pause.
+
+**Next action: Firebase foundation.** Create/connect the RichInsights Firebase project, register com.ricven.richinsights, configure Firebase in Android, and verify the connection with a minimal test. Keep authentication flows, Firestore content collections, Cloud Functions, quiz data, and production content logic out of scope for this initial Firebase connection checkpoint. After implementation, build, install, test, document, and checkpoint before proceeding.
