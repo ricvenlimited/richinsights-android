@@ -330,7 +330,7 @@ Current state:
 - **Brand/icon direction:** option C has been selected as the RichInsights brand direction.
 - **Launch experience:** the Compose brand intro is integrated and has been tested on a physical Android device.
 - **Launch transition checkpoint:** PR #5 was squash-merged after the user verified the change. The navigation shell is prepared behind the brand overlay, the unnecessary 500 ms post-tagline hold is removed, and the final overlay fade is 180 ms to avoid revealing an empty navy screen.
-- **Documentation checkpoint:** roadmap and UI/UX status are being synchronized with the verified implementation.
+- **Documentation checkpoint:** roadmap and UI/UX status have been synchronized with the verified implementation.
 - **Next step:** Firebase foundation, following Stage 1 Step 5. Do not jump ahead to full authentication flows, Firestore content collections, Cloud Functions, quiz data, or production content logic.
 
 This identity checkpoint is sufficiently settled to resume the planned Stage 1 sequence. It does not invalidate Steps 1–4 or require the navigation shell to be rebuilt.
