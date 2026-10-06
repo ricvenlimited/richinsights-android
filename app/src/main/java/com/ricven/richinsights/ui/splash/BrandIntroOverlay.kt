@@ -106,15 +106,13 @@ fun BrandIntroOverlay(
             animationSpec = tween(500, easing = FastOutSlowInEasing),
         )
 
-        // Hold the completed brand frame briefly so the experience feels intentional
-        // rather than like a technical delay.
-        kotlinx.coroutines.delay(500)
-
+        // Move directly from the completed tagline into the ready app shell.
+        // Keep only a short fade to avoid an empty-looking pause after the brand.
         onSequenceCompleted()
 
         overlayAlpha.animateTo(
             targetValue = 0f,
-            animationSpec = tween(300, easing = FastOutSlowInEasing),
+            animationSpec = tween(180, easing = FastOutSlowInEasing),
         )
         onFinished()
     }
