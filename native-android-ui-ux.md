@@ -54,14 +54,20 @@ RichInsights uses a **deep navy → intelligent blue → electric cyan → restr
 
 ### Supporting UI palette
 
-- **Background — `#F7F9FC`**
-- **Surface — `#FFFFFF`**
+- **App canvas / standard surface — `#FFFFFF`**
+- **Pale-blue surface accent — `#E8F7FF`**
+- **Strong surface — Deep Navy, `#102A43`**
 - **Primary text — `#172033`**
-- **Secondary text — `#667085`**
-- **Success — `#22A06B`**
-- **Error — `#D64545`**
+- **Secondary text — `#5B6474`**
+- **Success fill/icon — `#22A06B`**
+- **Success text — `#167A4C`**
+- **Error — `#C93B3B`**
 
-Semantic green and red are reserved primarily for success, confirmation, incorrect, warning/error, and validation states. Gold is not a general-purpose status color.
+The main app canvas and standard Material surfaces use pure white. Pale-blue accent surfaces are reserved for components that need a distinct container treatment; spacing, outlines, and hierarchy should keep white cards legible on the white canvas. Material 3 `surfaceTint` is an elevation-tint role, not a pale background token, and maps to the primary blue.
+
+Semantic green and red are reserved primarily for success, confirmation, incorrect, warning/error, and validation states. Use the darker success token for small success text; the brighter success token remains available for suitable fills and icons. Cyan and gold remain signature accents, but should not be used for normal-sized text on white unless contrast is sufficient. Gold is not a general-purpose status color.
+
+The secondary text token is intentionally darker to improve contrast consistency across white and pale-blue surfaces. Contrast must be evaluated for each actual foreground/background pair; do not infer accessibility from token names alone.
 
 The palette should remain controlled. RichInsights should not become a rainbow-style educational app, and individual product sections should not introduce competing brand palettes.
 
