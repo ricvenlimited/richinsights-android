@@ -360,6 +360,77 @@ This identity checkpoint is sufficiently settled to resume the planned Stage 1 s
 - completion/results
 - failure/retry states
 
+#### Quiz navigation and behavior architecture — planned
+
+**Status: architectural planning documented; not yet implemented.** This section defines the intended V1 quiz experience and implementation boundaries. It must not be interpreted as a claim that these screens or behaviors already exist in the Android app.
+
+##### Product entry and navigation
+
+The existing top-level navigation remains **Home | Learn | Quiz | Bible | News**. The Quiz destination is the hub for quiz-specific experiences; this decision does not add a sixth primary navigation destination.
+
+The Quiz Hub separates two user intentions:
+
+- **Learn / Practice:** self-paced quizzes selected by subject, topic, or available quiz. Untimed by default; learning and review take priority over speed.
+- **Challenge:** Daily Challenge, Exam Simulation, and Competitive Challenges. Each challenge declares its rules before the attempt begins, including whether a timer applies, duration, scoring, timeout handling, and when answers/explanations become available.
+
+The UI should communicate availability and relevant progress where useful without making all modes appear equally urgent. Challenge-specific details must be presented before the user starts.
+
+##### Shared engine and mode-specific rules
+
+Use one shared quiz engine for common mechanics while keeping mode policies separate. Shared responsibilities include question presentation, session/attempt state, answer submission, progression, progress tracking, scoring primitives, completion, results, and failure/retry handling.
+
+Mode policies control timing, feedback/reveal behavior, scoring details, timeout handling, review availability, and any challenge-specific constraints. Do not fork the entire quiz engine for each mode, and do not let learning-mode assumptions leak into exams or competitive challenges.
+
+##### Standard user flow
+
+1. **Quiz Hub:** choose Learn / Practice or a challenge.
+2. **Selection / details:** choose a subject, topic, or quiz in Learn; for a challenge, review its rules, question count, applicable duration, scoring, and relevant restrictions.
+3. **Quiz in progress:** show the question, answer options, and progress. Show a timer only when the active mode requires one. Provide a clear exit action.
+4. **Answer feedback:** tapping an answer submits it immediately; there is no separate Confirm button. Prevent duplicate submissions and make the selected/submitted state clear.
+5. **Completion and results:** show score and performance, correct/incorrect/unanswered counts where applicable, and a clear next action. Provide answer review and explanations when allowed by the mode and available for the question. Challenge results may include challenge-specific comparison/ranking only when supported and appropriate.
+
+##### Answer feedback and progression
+
+Initial design/testing targets—not immutable product constants—are:
+
+- Correct-answer feedback: approximately **800 ms**.
+- Incorrect-answer feedback: approximately **1,500 ms**, with the correct answer revealed where the active mode permits it.
+- Keep feedback durations configurable so usability testing can refine them.
+
+The UI must represent answer states clearly, including default, pressed/selected, correct, incorrect, and long-answer text. Avoid a separate locked-answer state unless a real product rule requires it.
+
+The policy for moving to the next question (automatic advance versus an explicit Next action) should be mode-configurable and validated through realistic-device usability testing. Feedback must remain accessible and understandable; do not make fast animation the only indication of correctness.
+
+**Exam Simulation:** do not reveal correct answers during an active assessment by default. Reveal answers and explanations only at the point defined by the exam policy (for example, after submission or after an allowed review stage).
+
+**Timed challenges:** feedback animation or presentation must not introduce an accidental or unfair timing penalty. Each timed mode must explicitly define whether the clock is session-wide or per-question, whether it continues during feedback/backgrounding, and what constitutes the authoritative deadline. Competitive scoring and timing must not rely on a client-side timer as the sole authority.
+
+##### Timeout, interruption, and recovery
+
+- **Timeout:** treat an expired unanswered question as unanswered, not as a user-selected incorrect answer, unless a documented challenge scoring rule explicitly defines a different score treatment. Apply the declared timeout policy exactly once. Reveal the correct answer only when permitted by that mode.
+- **Exit:** warn before abandoning an active attempt. Preserve or discard progress according to the attempt/mode policy and communicate the consequence clearly.
+- **Interruption/process recreation:** restore an eligible attempt and its state where the mode allows it. Timed modes must reconcile against a trustworthy deadline rather than silently resetting time.
+- **Network failure:** Quiz requires internet under the current online-first product direction. Show clear connection/failure/retry states, prevent duplicate submissions, and avoid losing an answer already accepted locally while clearly distinguishing locally recorded state from server-confirmed state.
+- **Completion/rewards:** prevent duplicate final submissions, scores, and reward grants. Treat server-side validation as authoritative for protected competitive results and rewards.
+
+##### Domain and implementation boundaries
+
+Represent the selected mode and its rules explicitly in the session/attempt domain model rather than scattering mode checks across Compose screens. Keep UI state, domain/session rules, repository access, and remote/local data sources separated in line with the core V2 architecture. Persist only the state needed for supported recovery; do not treat cached quiz history as permission to run quizzes offline.
+
+##### Acceptance criteria before implementation is considered complete
+
+- Learn / Practice starts untimed unless an explicitly selected product rule says otherwise.
+- Challenge details and applicable timing/scoring rules are visible before starting.
+- Answer selection submits once, with duplicate taps safely ignored.
+- Exam answer-reveal behavior follows the declared assessment policy.
+- Timeout, exit, interruption, retry, and completion each have explicit, tested state transitions.
+- Results and any rewards cannot be duplicated by retries or repeated requests.
+- Loading, empty, offline, unavailable, and recoverable failure states are designed and tested.
+- Important flows are validated at realistic Android screen sizes and accessibility/font-scale settings.
+- Debug build and relevant automated tests pass before the work is considered implemented.
+
+
+
 ### Stage 5 — Backend/content integration
 - connect to the selected V2 backend/content services
 - network handling
