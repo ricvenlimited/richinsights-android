@@ -9,17 +9,18 @@ val RichInsightsCyan = Color(0xFF19B5FE)
 val RichInsightsGold = Color(0xFFF4B942)
 
 // App canvas and surface hierarchy
-val RichInsightsBackground = Color(0xFFF7F9FC)
+// The main app canvas and standard Material surfaces are pure white.
 val RichInsightsSurface = Color(0xFFFFFFFF)
-val RichInsightsSurfaceTint = Color(0xFFEAF4FF)
-val RichInsightsSurfaceStrong = Color(0xFF102A43)
+// Shared pale-blue container treatment for secondary/variant surfaces.
 val RichInsightsSurfaceAccent = Color(0xFFE8F7FF)
+val RichInsightsSurfaceStrong = Color(0xFF102A43)
 
 // Text hierarchy
 val RichInsightsPrimaryText = Color(0xFF172033)
-val RichInsightsSecondaryText = Color(0xFF667085)
+val RichInsightsSecondaryText = Color(0xFF5B6474)
 val RichInsightsOnStrongSurface = Color(0xFFFFFFFF)
 
 // Supporting states
 val RichInsightsSuccess = Color(0xFF22A06B)
-val RichInsightsError = Color(0xFFD64545)
+val RichInsightsSuccessText = Color(0xFF167A4C)
+val RichInsightsError = Color(0xFFC93B3B)
