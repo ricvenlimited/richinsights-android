@@ -333,16 +333,47 @@ The quiz interface should clearly communicate:
 - score/streak context;
 - immediate feedback.
 
-Answer states include:
-- default;
-- pressed/selected;
-- correct;
-- incorrect;
-- disabled/locked.
+**Planned answer-option component — design specification only; not yet implemented.**
 
-Feedback must be immediate, clear, and accessible.
+The answer-option component is a reusable quiz building block. The following records the agreed direction for future design and implementation; it does not claim that a Compose component or complete quiz screen already exists.
 
-The exact timer and other detailed interaction rules should be validated before being locked into the final design.
+Required visual states:
+- **Default:** standard surface, 1 dp outline using the established secondary-text token, outlined A–D marker.
+- **Selected:** pale-blue accent surface, 2 dp blue outline, filled blue marker with white letter.
+- **Correct:** success treatment with a check icon and the word **Correct**; use the established success fill/icon and darker success-text tokens appropriately.
+- **Incorrect:** error treatment with a cross icon and the word **Incorrect**.
+- **Long text:** answer text wraps naturally and the option grows vertically rather than clipping.
+
+Do not introduce a separate **Locked** answer appearance as a normal quiz state. After submission, non-selected options should remain visually in their default state and become non-interactive where the active mode requires it. Exam Simulation is an exception to immediate correctness reveal: during an active exam, show the selected state only and reveal correctness later according to the declared exam rules.
+
+Planned layout and typography:
+- Minimum height: 56 dp; grow with wrapped text.
+- Medium Material shape (16 dp corner radius).
+- Horizontal padding: 16 dp; vertical padding: 12 dp.
+- Full available width within 16 dp screen margins.
+- 8 dp vertical spacing between options.
+- Leading answer marker: 32 dp circle, 16 dp from the start edge, with a 12 dp gap before answer text.
+- Answer text: bodyLarge (16 sp), PrimaryText; marker letter: 14 sp SemiBold; status label: 12 sp SemiBold at the end of the row.
+- Draw outlines inside the component bounds using Compose BorderStroke; use theme tokens rather than hard-coded colors.
+
+Interaction and feedback rules (planned):
+- Tapping an option submits immediately; no Confirm button.
+- Accept only the first valid submission; ignore duplicate taps.
+- In modes that permit immediate feedback, show the selected answer as Correct or Incorrect. If incorrect, reveal the correct option where the mode policy permits it.
+- Initial usability-test targets: about 800 ms after a correct answer and about 1,500 ms after an incorrect answer. Keep these values configurable, and validate on real devices.
+- Automatic advance versus an explicit Next action is mode-configurable and remains subject to usability testing.
+- A timeout is an unanswered question, not an answer-option visual state. Communicate timeout at question/session/results level according to the active mode.
+- The timer is not part of this component; it belongs to the quiz screen and appears only in timed modes.
+
+Accessibility:
+- The full option row is one touch target (minimum 56 dp).
+- Communicate option letter, answer text, and state (selected/correct/incorrect) to accessibility services.
+- Never rely on color alone: use marker shape/icon and visible status text.
+- Verify wrapping, contrast, touch targets, and font scaling at realistic Android sizes.
+
+This specification must remain aligned with the planned quiz architecture in the roadmap. Detailed mode policies take precedence over generic component feedback, particularly for exam simulations and timed competitive challenges.
+
+Feedback must be clear and accessible. Timer behavior and other mode-specific rules remain governed by the roadmap and must be validated before implementation.
 
 ## 10. Results and progress
 
