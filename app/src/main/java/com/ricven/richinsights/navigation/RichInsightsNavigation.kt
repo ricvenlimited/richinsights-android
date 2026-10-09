@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -99,7 +100,13 @@ fun RichInsightsNavigation() {
                                     painter = painterResource(item.iconRes),
                                     contentDescription = null,
                                     tint = if (selected) colors.onSurface else colors.onSurfaceVariant,
-                                    modifier = Modifier.size(if (item.destination == RichInsightsDestination.Home) 30.dp else 24.dp),
+                                    modifier = Modifier
+                                        .size(if (item.destination == RichInsightsDestination.Home) 30.dp else 24.dp)
+                                        .graphicsLayer {
+                                            val brandMark = item.destination == RichInsightsDestination.Home
+                                            scaleX = if (brandMark) 1.8f else 1f
+                                            scaleY = if (brandMark) 1.8f else 1f
+                                        },
                                 )
                             }
                         },
