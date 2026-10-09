@@ -122,7 +122,11 @@ fun RichInsightsNavigation() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onBack = { backStack.removeLastOrNull() },
+            onBack = {
+                if (backStack.size > 1) {
+                    backStack.removeLastOrNull()
+                }
+            },
             entryProvider = { key ->
                 when (key) {
                     is RichInsightsDestination -> NavEntry(key) {
