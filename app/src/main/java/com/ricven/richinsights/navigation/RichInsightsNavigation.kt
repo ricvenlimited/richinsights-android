@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,8 +63,11 @@ fun RichInsightsNavigation() {
                 )
             }
         },
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
                 primaryNavigationItems.forEach { item ->
                     val selected = backStack.lastOrNull() == item.destination
                     NavigationBarItem(
@@ -85,7 +89,7 @@ fun RichInsightsNavigation() {
                                 modifier = Modifier
                                     .size(48.dp)
                                     .background(
-                                        color = if (selected) RichInsightsSurfaceAccent else Color.Transparent,
+                                        color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
                                         shape = RoundedCornerShape(16.dp),
                                     ),
                                 contentAlignment = Alignment.Center,
@@ -101,9 +105,9 @@ fun RichInsightsNavigation() {
                         label = { Text(item.label) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = RichInsightsDeepNavy,
-                            selectedTextColor = RichInsightsCyan,
+                            selectedTextColor = MaterialTheme.colorScheme.secondary,
                             unselectedIconColor = RichInsightsSecondaryText,
-                            unselectedTextColor = RichInsightsSecondaryText,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             indicatorColor = Color.Transparent,
                         ),
                     )
