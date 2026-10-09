@@ -93,13 +93,7 @@ fun RichInsightsNavigation() {
                                 Icon(
                                     painter = painterResource(item.iconRes),
                                     contentDescription = null,
-                                    tint = if (item.preserveBrandColors) {
-                                        Color.Unspecified
-                                    } else if (selected) {
-                                        RichInsightsDeepNavy
-                                    } else {
-                                        RichInsightsSecondaryText
-                                    },
+                                    tint = Color.Unspecified,
                                     modifier = Modifier.size(24.dp),
                                 )
                             }
