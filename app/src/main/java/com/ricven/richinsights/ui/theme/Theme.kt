@@ -1,8 +1,10 @@
 package com.ricven.richinsights.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,28 @@ private val RichInsightsLightColorScheme = lightColorScheme(
     onError = RichInsightsSurface,
 )
 
+private val RichInsightsDarkColorScheme = darkColorScheme(
+    primary = RichInsightsCyan,
+    onPrimary = RichInsightsDeepNavy,
+    primaryContainer = RichInsightsDarkSurfaceStrong,
+    onPrimaryContainer = RichInsightsDarkPrimaryText,
+    secondary = Color(0xFF66D1FF),
+    onSecondary = RichInsightsDeepNavy,
+    secondaryContainer = RichInsightsDarkSurfaceAccent,
+    onSecondaryContainer = RichInsightsDarkPrimaryText,
+    tertiary = RichInsightsGold,
+    onTertiary = RichInsightsDeepNavy,
+    background = RichInsightsDarkBackground,
+    onBackground = RichInsightsDarkPrimaryText,
+    surface = RichInsightsDarkSurface,
+    onSurface = RichInsightsDarkPrimaryText,
+    surfaceVariant = RichInsightsDarkSurfaceAccent,
+    onSurfaceVariant = RichInsightsDarkSecondaryText,
+    surfaceTint = RichInsightsCyan,
+    error = RichInsightsDarkError,
+    onError = RichInsightsDeepNavy,
+)
+
 private val RichInsightsShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(12.dp),
@@ -50,10 +74,11 @@ object RichInsightsSpacing {
 
 @Composable
 fun RichInsightsTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = RichInsightsLightColorScheme,
+        colorScheme = if (darkTheme) RichInsightsDarkColorScheme else RichInsightsLightColorScheme,
         typography = RichInsightsTypography,
         shapes = RichInsightsShapes,
         content = content,
