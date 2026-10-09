@@ -2,43 +2,41 @@ package com.ricven.richinsights.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.Alignment
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.ricven.richinsights.R
-import com.ricven.richinsights.ui.theme.RichInsightsCyan
-import com.ricven.richinsights.ui.theme.RichInsightsDeepNavy
-import com.ricven.richinsights.ui.theme.RichInsightsSecondaryText
-import com.ricven.richinsights.ui.theme.RichInsightsSurfaceAccent
 
 private data class NavigationItem(
     val destination: RichInsightsDestination,
     val label: String,
     val iconRes: Int,
-    val preserveBrandColors: Boolean = false,
 )
 
 private val primaryNavigationItems = listOf(
-    NavigationItem(RichInsightsDestination.Home, "For You", R.drawable.ic_nav_for_you, preserveBrandColors = true),
+    NavigationItem(RichInsightsDestination.Home, "For You", R.drawable.ic_nav_for_you),
     NavigationItem(RichInsightsDestination.Learn, "Learn", R.drawable.ic_nav_learn),
     NavigationItem(RichInsightsDestination.Quiz, "Quiz", R.drawable.ic_nav_quiz),
     NavigationItem(RichInsightsDestination.Bible, "Bible", R.drawable.ic_nav_bible),
@@ -48,25 +46,34 @@ private val primaryNavigationItems = listOf(
 @Composable
 fun RichInsightsNavigation() {
     val backStack = rememberNavBackStack(RichInsightsDestination.Home)
+    val colors = MaterialTheme.colorScheme
 
     Scaffold(
+        containerColor = colors.background,
         topBar = {
-            IconButton(
-                onClick = {
-                    backStack.add(RichInsightsDestination.Profile)
-                },
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colors.surface)
+                    .statusBarsPadding(),
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_nav_profile),
-                    contentDescription = "Profile and Settings",
-                    tint = Color.Unspecified,
-                )
+                IconButton(
+                    onClick = { backStack.add(RichInsightsDestination.Profile) },
+                    modifier = Modifier.size(48.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_nav_profile),
+                        contentDescription = "Profile and Settings",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(28.dp),
+                    )
+                }
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface,
+                containerColor = colors.surface,
+                windowInsets = WindowInsets(0, 0, 0, 0),
             ) {
                 primaryNavigationItems.forEach { item ->
                     val selected = backStack.lastOrNull() == item.destination
@@ -74,11 +81,7 @@ fun RichInsightsNavigation() {
                         selected = selected,
                         onClick = {
                             if (!selected) {
-                                // Treat bottom destinations as peer top-level screens.
-                                // Clear transient destinations before switching tabs.
-                                while (backStack.size > 1) {
-                                    backStack.removeLastOrNull()
-                                }
+                                while (backStack.size > 1) backStack.removeLastOrNull()
                                 if (backStack.lastOrNull() != item.destination) {
                                     backStack.add(item.destination)
                                 }
@@ -89,7 +92,7 @@ fun RichInsightsNavigation() {
                                 modifier = Modifier
                                     .size(48.dp)
                                     .background(
-                                        color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                                        color = if (selected) colors.secondaryContainer else Color.Transparent,
                                         shape = RoundedCornerShape(16.dp),
                                     ),
                                 contentAlignment = Alignment.Center,
@@ -104,10 +107,10 @@ fun RichInsightsNavigation() {
                         },
                         label = { Text(item.label) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = RichInsightsDeepNavy,
-                            selectedTextColor = MaterialTheme.colorScheme.secondary,
-                            unselectedIconColor = RichInsightsSecondaryText,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedIconColor = colors.onSurface,
+                            selectedTextColor = colors.primary,
+                            unselectedIconColor = colors.onSurfaceVariant,
+                            unselectedTextColor = colors.onSurfaceVariant,
                             indicatorColor = Color.Transparent,
                         ),
                     )
@@ -121,9 +124,7 @@ fun RichInsightsNavigation() {
                 .fillMaxSize()
                 .padding(paddingValues),
             onBack = {
-                if (backStack.size > 1) {
-                    backStack.removeLastOrNull()
-                }
+                if (backStack.size > 1) backStack.removeLastOrNull()
             },
             entryProvider = { key ->
                 when (key) {
@@ -138,9 +139,7 @@ fun RichInsightsNavigation() {
 }
 
 @Composable
-private fun RichInsightsDestinationPlaceholder(
-    destination: RichInsightsDestination,
-) {
+private fun RichInsightsDestinationPlaceholder(destination: RichInsightsDestination) {
     val title = remember(destination) {
         when (destination) {
             RichInsightsDestination.Home -> "For You"
@@ -151,6 +150,5 @@ private fun RichInsightsDestinationPlaceholder(
             RichInsightsDestination.Profile -> "Profile & Settings"
         }
     }
-
-    Text(text = title)
+    Text(text = title, color = MaterialTheme.colorScheme.onBackground)
 }
