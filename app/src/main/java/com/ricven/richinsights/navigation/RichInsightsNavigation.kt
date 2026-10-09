@@ -2,7 +2,6 @@ package com.ricven.richinsights.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -64,7 +63,7 @@ fun RichInsightsNavigation() {
                     Icon(
                         painter = painterResource(R.drawable.ic_nav_profile),
                         contentDescription = "Profile and Settings",
-                        tint = Color.Unspecified,
+                        tint = colors.onSurface,
                         modifier = Modifier.size(28.dp),
                     )
                 }
@@ -73,7 +72,6 @@ fun RichInsightsNavigation() {
         bottomBar = {
             NavigationBar(
                 containerColor = colors.surface,
-                windowInsets = WindowInsets(0, 0, 0, 0),
             ) {
                 primaryNavigationItems.forEach { item ->
                     val selected = backStack.lastOrNull() == item.destination
@@ -100,8 +98,8 @@ fun RichInsightsNavigation() {
                                 Icon(
                                     painter = painterResource(item.iconRes),
                                     contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(24.dp),
+                                    tint = if (selected) colors.onSurface else colors.onSurfaceVariant,
+                                    modifier = Modifier.size(if (item.destination == RichInsightsDestination.Home) 30.dp else 24.dp),
                                 )
                             }
                         },
