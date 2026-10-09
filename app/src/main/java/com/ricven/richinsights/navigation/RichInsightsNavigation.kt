@@ -1,6 +1,9 @@
 package com.ricven.richinsights.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,9 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -77,18 +81,28 @@ fun RichInsightsNavigation() {
                             }
                         },
                         icon = {
-                            Icon(
-                                painter = painterResource(item.iconRes),
-                                contentDescription = null,
-                                tint = if (item.preserveBrandColors) {
-                                    Color.Unspecified
-                                } else if (selected) {
-                                    RichInsightsDeepNavy
-                                } else {
-                                    RichInsightsSecondaryText
-                                },
-                                modifier = Modifier.padding(0.dp),
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(
+                                        color = if (selected) RichInsightsSurfaceAccent else Color.Transparent,
+                                        shape = RoundedCornerShape(16.dp),
+                                    ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    painter = painterResource(item.iconRes),
+                                    contentDescription = null,
+                                    tint = if (item.preserveBrandColors) {
+                                        Color.Unspecified
+                                    } else if (selected) {
+                                        RichInsightsDeepNavy
+                                    } else {
+                                        RichInsightsSecondaryText
+                                    },
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
                         },
                         label = { Text(item.label) },
                         colors = NavigationBarItemDefaults.colors(
@@ -96,7 +110,7 @@ fun RichInsightsNavigation() {
                             selectedTextColor = RichInsightsCyan,
                             unselectedIconColor = RichInsightsSecondaryText,
                             unselectedTextColor = RichInsightsSecondaryText,
-                            indicatorColor = RichInsightsSurfaceAccent,
+                            indicatorColor = Color.Transparent,
                         ),
                     )
                 }
