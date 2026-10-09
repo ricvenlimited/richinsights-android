@@ -268,19 +268,30 @@ No production icon or animation should be considered final merely because it loo
 
 ## 6. Primary navigation
 
-### Compact phones
+### Phone navigation
 
-**Home | Learn | Quiz | Bible | News**
+The primary destinations are **For You | Learn | Quiz | Bible | News**. Profile & Settings is a separate global control, not a sixth bottom destination.
 
-### Profile & Settings
+- **For You:** personalized platform entry point; the approved Option C leaning-R brand mark identifies it.
+- **Learn:** open-book mark; supports course discovery and a Downloaded area for saved courses.
+- **Quiz:** question/answer-card mark.
+- **Bible:** upright book with a central cross and bookmark, visually distinct from Learn's open book.
+- **News:** editorial document/feed mark.
+- **Profile & Settings:** circular profile mark; keep the profile silhouette clean, without a diagonal chest line.
 
-Profile and settings are secondary/global destinations, accessed through the appropriate profile or account action rather than taking a permanent primary-navigation slot.
+Use one coherent, restrained icon family. The selected destination has a subtle cyan-tinted squircle behind the icon only; the label remains outside the squircle. Selected and unselected labels/icons must stay distinguishable in both themes. Keep gold for meaningful achievement accents rather than decorating every navigation icon.
+
+### App shell and system insets
+
+The top profile control and bottom navigation remain fixed while the central destination content scrolls independently. Content must receive the appropriate insets so neither bar obscures it. Backgrounds may extend behind system bars, but interactive controls must remain clear of the status-bar cutout and gesture area.
 
 ### Larger screens
 
-Use adaptive navigation appropriate to the available window size. Do not stretch a phone bottom bar across large screens.
+Use adaptive navigation appropriate to the available window size. Do not stretch a phone bottom bar across large screens. Preserve useful destination state where appropriate.
 
-Each primary destination should preserve useful navigation state where appropriate.
+### Implementation checkpoint
+
+**Implemented in code; physical-device verification remains outstanding.** The current branch adds theme-derived icon tinting, applies status-bar padding to the profile control, retains Material 3 bottom-navigation inset handling, and adjusts the For You mark's rendered size. These changes are not considered device-verified until a debug build is installed and checked in both light and dark themes, including scrolling, cutouts, gesture navigation, and selected/unselected states.
 
 ## 7. Home
 
@@ -372,8 +383,6 @@ Accessibility:
 - Verify wrapping, contrast, touch targets, and font scaling at realistic Android sizes.
 
 This specification must remain aligned with the planned quiz architecture in the roadmap. Detailed mode policies take precedence over generic component feedback, particularly for exam simulations and timed competitive challenges.
-
-Feedback must be clear and accessible. Timer behavior and other mode-specific rules remain governed by the roadmap and must be validated before implementation.
 
 ## 10. Results and progress
 
