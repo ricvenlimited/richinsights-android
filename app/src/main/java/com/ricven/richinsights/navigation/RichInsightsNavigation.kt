@@ -3,12 +3,14 @@ package com.ricven.richinsights.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +33,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.ricven.richinsights.R
 import com.ricven.richinsights.ui.theme.RichInsightsDivider
+import com.ricven.richinsights.ui.theme.RichInsightsDarkDivider
 
 private data class NavigationItem(
     val destination: RichInsightsDestination,
@@ -51,11 +54,12 @@ private val primaryNavigationItems = listOf(
 fun RichInsightsNavigation() {
     val backStack = rememberNavBackStack(RichInsightsDestination.Home)
     val colors = MaterialTheme.colorScheme
+    val dividerColor = if (isSystemInDarkTheme()) RichInsightsDarkDivider else RichInsightsDivider
 
     Scaffold(
         containerColor = colors.background,
         topBar = {
-            androidx.compose.foundation.layout.Column(
+            Column(
                 modifier = Modifier.fillMaxWidth().background(colors.surface).statusBarsPadding(),
             ) {
                 Row(
@@ -84,11 +88,11 @@ fun RichInsightsNavigation() {
                         )
                     }
                 }
-                Box(Modifier.fillMaxWidth().height(1.dp).background(RichInsightsDivider))
+                Box(Modifier.fillMaxWidth().height(1.dp).background(dividerColor))
             }
         },
         bottomBar = {
-            androidx.compose.foundation.layout.Column {
+            Column {
                 Box(Modifier.fillMaxWidth().height(1.dp).background(RichInsightsDivider))
                 NavigationBar(containerColor = colors.surface) {
                     primaryNavigationItems.forEach { item ->
