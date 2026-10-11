@@ -93,7 +93,7 @@ fun RichInsightsNavigation() {
         },
         bottomBar = {
             Column {
-                Box(Modifier.fillMaxWidth().height(1.dp).background(RichInsightsDivider))
+                Box(Modifier.fillMaxWidth().height(1.dp).background(dividerColor))
                 NavigationBar(containerColor = colors.surface) {
                     primaryNavigationItems.forEach { item ->
                         val selected = backStack.lastOrNull() == item.destination
