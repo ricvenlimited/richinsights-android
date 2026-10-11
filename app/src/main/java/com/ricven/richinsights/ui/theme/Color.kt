@@ -26,6 +26,10 @@ val RichInsightsOnStrongSurface = Color(0xFFFFFFFF)
 val RichInsightsDarkPrimaryText = Color(0xFFF2F6FA)
 val RichInsightsDarkSecondaryText = Color(0xFFB7C5D3)
 
+// Navigation shell divider
+val RichInsightsDivider = Color(0xFFE5E8EC)
+val RichInsightsDarkDivider = Color(0xFF18384F)
+
 // Supporting states
 val RichInsightsSuccess = Color(0xFF22A06B)
 val RichInsightsSuccessText = Color(0xFF167A4C)
