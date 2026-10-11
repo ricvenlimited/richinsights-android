@@ -20,7 +20,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -139,7 +138,7 @@ fun RichInsightsNavigation() {
             onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
             entryProvider = { key ->
                 when (key) {
-                    is RichInsightsDestination -> NavEntry(key) { RichInsightsDestinationPlaceholder(destination = key) }
+                    is RichInsightsDestination -> NavEntry(key) { Box(Modifier.fillMaxSize()) }
                     else -> error("Unsupported navigation key: $key")
                 }
             },
@@ -147,17 +146,3 @@ fun RichInsightsNavigation() {
     }
 }
 
-@Composable
-private fun RichInsightsDestinationPlaceholder(destination: RichInsightsDestination) {
-    val title = remember(destination) {
-        when (destination) {
-            RichInsightsDestination.Home -> "For You"
-            RichInsightsDestination.Learn -> "Learn"
-            RichInsightsDestination.Quiz -> "Quiz"
-            RichInsightsDestination.Bible -> "Bible"
-            RichInsightsDestination.News -> "News"
-            RichInsightsDestination.Profile -> "Profile & Settings"
-        }
-    }
-    Text(text = title, color = MaterialTheme.colorScheme.onBackground)
-}
