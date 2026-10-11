@@ -68,7 +68,6 @@ object RichInsightsSpacing {
     val medium = 16.dp
     val large = 24.dp
     val extraLarge = 32.dp
-
     val smallMedium = 12.dp
     val extraLargePlus = 40.dp
 }
