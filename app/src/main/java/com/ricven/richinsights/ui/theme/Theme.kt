@@ -36,11 +36,11 @@ private val RichInsightsLightColorScheme = lightColorScheme(
 
 private val RichInsightsDarkColorScheme = darkColorScheme(
     primary = RichInsightsCyan,
-    onPrimary = RichInsightsDeepNavy,
+    onPrimary = RichInsightsPrimaryText,
     primaryContainer = RichInsightsDarkSurface,
     onPrimaryContainer = RichInsightsOnStrongSurface,
-    secondary = Color(0xFF66D1FF),
-    onSecondary = RichInsightsDeepNavy,
+    secondary = RichInsightsCyan,
+    onSecondary = RichInsightsPrimaryText,
     secondaryContainer = RichInsightsDarkOutline,
     onSecondaryContainer = RichInsightsOnStrongSurface,
     tertiary = RichInsightsGold,
