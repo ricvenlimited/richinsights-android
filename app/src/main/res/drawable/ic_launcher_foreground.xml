@@ -4,7 +4,6 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Filled contours replace thick stroked centre-lines for a cleaner, more deliberate mark. -->
     <path
         android:fillColor="#FFFFFF"
         android:fillType="evenOdd"
