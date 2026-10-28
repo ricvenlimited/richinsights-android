@@ -36,11 +36,10 @@ private val brandIntroSeenKey = booleanPreferencesKey("brand_intro_seen")
 private enum class StartupState {
     DeterminingLaunchMode,
     FirstLaunchBrand,
-    ReturningLaunchBrand,
     Home,
 }
 
-private val DeepNavy = Color(0xFF102A43)
+private val RoyalNavy = Color(0xFF0B2970)
 
 class MainActivity : ComponentActivity() {
     private val startupState = mutableStateOf(StartupState.DeterminingLaunchMode)
@@ -48,27 +47,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition {
-            false
+            startupState.value == StartupState.DeterminingLaunchMode
         }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Do not replay the brand experience for a normal Activity recreation.
+        // Do not replay the first-launch brand sequence for an Activity recreation.
         if (savedInstanceState != null) {
             startupState.value = StartupState.Home
         } else {
             lifecycleScope.launch(Dispatchers.IO) {
                 val launchState = try {
                     val seen = richInsightsDataStore.data.first()[brandIntroSeenKey] ?: false
-                    if (seen) {
-                        StartupState.ReturningLaunchBrand
-                    } else {
-                        StartupState.FirstLaunchBrand
-                    }
+                    if (seen) StartupState.Home else StartupState.FirstLaunchBrand
                 } catch (_: Exception) {
-                    // This is non-critical UX state. If the preference cannot be read,
-                    // never block startup; use the shorter recurring experience.
-                    StartupState.ReturningLaunchBrand
+                    // This preference is non-critical: a read failure must not block Home.
+                    StartupState.Home
                 }
 
                 withContext(Dispatchers.Main.immediate) {
@@ -80,8 +74,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             RichInsightsTheme {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    // Prepare the app shell behind the brand overlay so the transition
-                    // never reveals an empty window while navigation is composing.
+                    // Compose the app shell before revealing it, so the first-launch
+                    // fade reveals real content instead of an empty placeholder.
                     RichInsightsNavigation()
 
                     when (startupState.value) {
@@ -89,29 +83,15 @@ class MainActivity : ComponentActivity() {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(DeepNavy),
+                                    .background(RoyalNavy),
                             )
                         }
 
                         StartupState.FirstLaunchBrand -> {
                             BrandIntroOverlay(
                                 showMark = true,
-                                onSequenceCompleted = {
-                                    persistBrandIntroSeen()
-                                },
-                                onFinished = {
-                                    startupState.value = StartupState.Home
-                                },
-                            )
-                        }
-
-                        StartupState.ReturningLaunchBrand -> {
-                            BrandIntroOverlay(
-                                showMark = false,
-                                onSequenceCompleted = {},
-                                onFinished = {
-                                    startupState.value = StartupState.Home
-                                },
+                                onSequenceCompleted = { persistBrandIntroSeen() },
+                                onFinished = { startupState.value = StartupState.Home },
                             )
                         }
 
@@ -131,9 +111,7 @@ class MainActivity : ComponentActivity() {
                     }
                     return@launch
                 } catch (_: Exception) {
-                    if (attempt < 2) {
-                        delay(1_000L)
-                    }
+                    if (attempt < 2) delay(1_000L)
                 }
             }
         }

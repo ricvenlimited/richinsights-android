@@ -2,13 +2,11 @@ package com.ricven.richinsights.ui.splash
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -27,7 +25,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -42,77 +39,50 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ricven.richinsights.R
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
-private val DeepNavy = Color(0xFF102A43)
-private val ElectricCyan = Color(0xFF19B5FE)
-private val WarmGold = Color(0xFFF4B942)
+private val RoyalNavy = Color(0xFF0B2970)
+private val SignatureCyan = Color(0xFF19B5FE)
+private val AchievementGold = Color(0xFFF4B942)
 private val PlusJakartaSans = FontFamily(
     Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
     Font(R.font.plus_jakarta_sans_semibold, FontWeight.SemiBold),
     Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold),
 )
 
+/**
+ * First-launch-only brand sequence. The mark remains fixed; the wordmark and
+ * tagline fade in below it. Total sequence is about 1.0 s, followed by a 150 ms
+ * fade into the already-composed app shell.
+ */
 @Composable
 fun BrandIntroOverlay(
-    showMark: Boolean,
+    showMark: Boolean = true,
     onSequenceCompleted: suspend () -> Unit,
     onFinished: () -> Unit,
 ) {
-    val markScale = remember { Animatable(1f) }
-    val markOffsetY = remember { Animatable(0f) }
     val wordmarkAlpha = remember { Animatable(0f) }
     val taglineAlpha = remember { Animatable(0f) }
     val overlayAlpha = remember { Animatable(1f) }
 
-    // Back never dismisses or shortens the brand experience.
+    // The short brand sequence cannot be dismissed with Back.
     BackHandler(enabled = true) {}
 
-    LaunchedEffect(showMark) {
-        if (showMark) {
-            // First launch: R establishes the brand before resolving into the wordmark.
-            kotlinx.coroutines.delay(400)
-            launch {
-                markScale.animateTo(
-                    targetValue = 0.47f,
-                    animationSpec = tween(700, easing = FastOutSlowInEasing),
-                )
-            }
-            launch {
-                markOffsetY.animateTo(
-                    targetValue = -70f,
-                    animationSpec = tween(700, easing = FastOutSlowInEasing),
-                )
-            }
-            launch {
-                wordmarkAlpha.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(700, easing = FastOutSlowInEasing),
-                )
-            }
-
-            kotlinx.coroutines.delay(600)
-        } else {
-            // Returning launch: the recurring brand moment starts directly with the wordmark.
-            wordmarkAlpha.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(700, easing = FastOutSlowInEasing),
-            )
-            kotlinx.coroutines.delay(700)
-        }
-
+    LaunchedEffect(Unit) {
+        delay(250L)
+        wordmarkAlpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(300, easing = LinearOutSlowInEasing),
+        )
         taglineAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(500, easing = FastOutSlowInEasing),
+            animationSpec = tween(300, easing = LinearOutSlowInEasing),
         )
-
-        // Move directly from the completed tagline into the ready app shell.
-        // Keep only a short fade to avoid an empty-looking pause after the brand.
+        delay(150L)
         onSequenceCompleted()
-
         overlayAlpha.animateTo(
             targetValue = 0f,
-            animationSpec = tween(180, easing = FastOutSlowInEasing),
+            animationSpec = tween(150, easing = LinearOutSlowInEasing),
         )
         onFinished()
     }
@@ -121,7 +91,7 @@ fun BrandIntroOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DeepNavy)
+            .background(RoyalNavy)
             .alpha(overlayAlpha.value),
     ) {
         if (showMark) {
@@ -130,59 +100,30 @@ fun BrandIntroOverlay(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(288.dp)
-                    .graphicsLayer {
-                        scaleX = markScale.value
-                        scaleY = markScale.value
-                        translationY = with(density) { markOffsetY.value.dp.toPx() }
-                    },
+                    .size(288.dp),
             )
         }
 
-        BoxWithConstraints(
+        // The wordmark's top edge sits 94 dp below the screen centre.
+        RichInsightsWordmark(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = if (showMark) 54.dp else 0.dp)
+                .offset(y = 118.dp)
                 .alpha(wordmarkAlpha.value),
-        ) {
-            var wordmarkWidthPx by remember {
-                mutableFloatStateOf(0f)
-            }
-            val maxWordmarkWidthPx = with(density) { (maxWidth * 0.66f).toPx() }
-            val horizontalScale = if (wordmarkWidthPx > 0f) {
-                minOf(1f, maxWordmarkWidthPx / wordmarkWidthPx)
-            } else {
-                1f
-            }
-
-            Box(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .graphicsLayer {
-                        scaleX = horizontalScale
-                        scaleY = horizontalScale
-                    },
-            ) {
-                RichInsightsWordmark(
-                    modifier = Modifier.onSizeChanged { size ->
-                        wordmarkWidthPx = size.width.toFloat()
-                    },
-                )
-            }
-        }
+        )
 
         Text(
             text = "Grow. Excel.",
-            color = ElectricCyan,
+            color = SignatureCyan,
             fontFamily = PlusJakartaSans,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            lineHeight = 20.sp,
+            lineHeight = 24.sp,
             textAlign = TextAlign.Center,
             maxLines = 1,
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = if (showMark) 102.dp else 48.dp)
+                .offset(y = 166.dp)
                 .alpha(taglineAlpha.value),
         )
     }
@@ -193,24 +134,12 @@ private fun RichInsightsWordmark(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-    var firstDotX by remember {
-        mutableFloatStateOf(Float.NaN)
-    }
-    var firstDotY by remember {
-        mutableFloatStateOf(Float.NaN)
-    }
-    var firstPieceWidth by remember {
-        mutableFloatStateOf(0f)
-    }
-    var middlePieceWidth by remember {
-        mutableFloatStateOf(0f)
-    }
-    var secondDotOffsetX by remember {
-        mutableFloatStateOf(Float.NaN)
-    }
-    var secondDotY by remember {
-        mutableFloatStateOf(Float.NaN)
-    }
+    var firstDotX by remember { mutableFloatStateOf(Float.NaN) }
+    var firstDotY by remember { mutableFloatStateOf(Float.NaN) }
+    var firstPieceWidth by remember { mutableFloatStateOf(0f) }
+    var middlePieceWidth by remember { mutableFloatStateOf(0f) }
+    var secondDotOffsetX by remember { mutableFloatStateOf(Float.NaN) }
+    var secondDotY by remember { mutableFloatStateOf(Float.NaN) }
 
     val wordmarkStyle = TextStyle(
         fontFamily = PlusJakartaSans,
@@ -225,22 +154,22 @@ private fun RichInsightsWordmark(
             .wrapContentSize()
             .clearAndSetSemantics { contentDescription = "RichInsights" },
     ) {
-        Row(
+        androidx.compose.foundation.layout.Row(
             modifier = Modifier
                 .wrapContentSize()
                 .drawWithContent {
                     drawContent()
-                    val radius = with(density) { 3.4.dp.toPx() }
+                    val radius = with(density) { 4.75.dp.toPx() }
                     if (firstDotX.isFinite()) {
                         drawCircle(
-                            color = WarmGold,
+                            color = AchievementGold,
                             radius = radius,
                             center = Offset(firstDotX, firstDotY),
                         )
                     }
                     if (secondDotOffsetX.isFinite()) {
                         drawCircle(
-                            color = WarmGold,
+                            color = AchievementGold,
                             radius = radius,
                             center = Offset(secondDotOffsetX, secondDotY),
                         )
@@ -262,7 +191,7 @@ private fun RichInsightsWordmark(
             )
             BasicText(
                 text = "I",
-                style = wordmarkStyle.copy(color = ElectricCyan),
+                style = wordmarkStyle.copy(color = SignatureCyan),
                 maxLines = 1,
                 softWrap = false,
                 overflow = TextOverflow.Clip,
@@ -284,6 +213,5 @@ private fun RichInsightsWordmark(
                 },
             )
         }
-
     }
 }
