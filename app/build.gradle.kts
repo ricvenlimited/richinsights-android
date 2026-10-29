@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -34,6 +35,9 @@ dependencies {
     implementation(libs.androidxCoreSplashscreen)
     implementation(libs.androidxDataStorePreferences)
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAnalytics)
 
     debugImplementation(libs.androidxComposeUiTooling)
 }
