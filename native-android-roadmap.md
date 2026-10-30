@@ -251,62 +251,54 @@ Requirements:
 Product identity, V2 reset principle, navigation, architecture boundaries, content/question requirements, and major quality requirements are documented.
 
 ### Stage 1 — Native application foundation
-**Status: in progress**
+**Status: foundation implemented; Firebase verification and final checkpoint remain in progress.**
 
-Stage 1 is being executed strictly in order. We do not jump ahead to backend/content features while a foundation step is still being established.
+The native project, Gradle/Compose setup, initial design system, navigation shell, Firebase Android configuration, and debug-build checkpoint are in place. The remaining work is to finish the foundation checkpoint without implying that full backend services are already implemented.
 
-#### Stage 1 execution order
+#### Stage 1 execution status
 
-1. **Create the native Android project**
-   - Kotlin
-   - Jetpack Compose
+1. **Native Android project — complete**
+   - Kotlin + Jetpack Compose
    - application/package identity: `com.ricven.richinsights`
    - native Android project structure
 
-2. **Establish the Gradle/project foundation**
-   - Gradle configuration
-   - SDK configuration
+2. **Gradle/project foundation — complete**
+   - Gradle and SDK configuration
    - dependency management
    - Compose/build configuration
 
-3. **Establish the initial RichInsights design system**
-   - theme foundation
-   - color tokens
-   - typography
-   - spacing/shapes conventions
-   - reusable UI foundation
-   - light-theme foundation with structure ready for dark theme later
-   - existing placeholder connected to `RichInsightsTheme`
+3. **Initial RichInsights design system — implemented**
+   - theme and brand color tokens
+   - Plus Jakarta Sans typography
+   - Material 3 shape and spacing tokens
+   - light/dark color schemes
+   - detailed visual decisions are recorded in `native-android-ui-ux.md`
 
-4. **Establish the navigation shell**
-   - initial primary navigation architecture
-   - Home / Learn / Quiz / Bible / News shell
-   - Profile & Settings remains secondary/global
-   - navigation structure only; no premature full product screens
+4. **Navigation shell — implemented**
+   - For You / Learn / Quiz / Bible / News
+   - Profile & Settings remains a separate global action
+   - current destination shell and navigation behavior are implemented; destination content remains placeholder-level
 
-5. **Firebase foundation**
-   - create/connect the RichInsights Firebase project
-   - register `com.ricven.richinsights`
-   - add Firebase configuration
-   - connect Firebase to Android
-   - verify the connection with a minimal test
-   - do **not** yet populate Firestore collections, quiz questions, authentication flows, Cloud Functions, or production content logic
+5. **Firebase foundation — configured; end-to-end verification pending**
+   - Firebase project `richinsights-v2`
+   - Android package registered as `com.ricven.richinsights`
+   - Google Services Gradle plugin and Firebase configuration present
+   - Firebase Analytics dependency included
+   - successful debug build confirms the project compiles; Analytics event delivery has not yet been independently verified
+   - Firebase Authentication flows, Firestore schema/security rules, Cloud Functions, and production content logic are **not implemented by this foundation step**
 
-   **Important sequencing note:** Firebase was intentionally paused while the product identity layer was being properly defined. The Firebase step remains next after the brand/launch work is sufficiently settled.
+6. **Debug build checkpoint — passed**
+   - latest recorded debug workflow completed successfully and uploaded an APK artifact
+   - the user has previously installed and tested the launch experience; new UI/theme changes still require their own appropriate device verification
 
-6. **Build and install the first V2 APK**
-   - build the real project
-   - install on a physical Android device
-   - verify launch and foundation behavior
+7. **GitHub checkpoint — branch available**
+   - current work is on `codex/stage-1-firebase-foundation`
+   - documentation changes should be reviewed and merged before creating the next implementation branch
 
-7. **GitHub checkpoint**
-   - commit the working foundation
-   - push to `ricvenlimited/richinsights-android`
-
-8. **Stage 1 checkpoint**
-   - verify the foundation
-   - resolve remaining issues
-   - freeze the Stage 1 foundation
+8. **Stage 1 checkpoint — documentation handoff in progress**
+   - keep the foundation buildable
+   - finish and review the documentation update
+   - merge the approved checkpoint
    - proceed to Stage 2
 
 #### Brand & Launch Identity checkpoint inserted before Firebase implementation
@@ -323,17 +315,17 @@ The identity work covers:
 
 **Design-tool transition note:** Figma remains the reference/archive workspace for the existing **RichInsights — Brand & Icon Concepts** exploration. Because the connected Figma Starter/View setup imposes MCP usage limits that can interrupt the planned workflow, **Penpot is now the active design workspace for continuing the brand/launch work and subsequent UI/UX design work**. This is a workflow change, not a product or architecture change. The existing Figma work is preserved and may still be used later.
 
-The project will continue through the remaining Stage 1 steps once the brand/launch direction is sufficiently settled:
-**brand/launch work → Firebase foundation → first V2 APK → GitHub checkpoint → Stage 1 checkpoint → Stage 2**.
+The brand/launch checkpoint is complete and the Firebase Android foundation is now configured. The remaining Stage 1 work is verification and checkpointing, not restarting the earlier steps.
 
 Current state:
-- **Brand/icon direction:** option C has been selected as the RichInsights brand direction.
-- **Launch experience:** the Compose brand intro is integrated and has been tested on a physical Android device.
-- **Launch transition checkpoint:** PR #5 was squash-merged after the user verified the change. The navigation shell is prepared behind the brand overlay, the unnecessary 500 ms post-tagline hold is removed, and the final overlay fade is 180 ms to avoid revealing an empty navy screen.
-- **Documentation checkpoint:** roadmap and UI/UX status have been synchronized with the verified implementation.
-- **Next step:** Firebase foundation, following Stage 1 Step 5. Do not jump ahead to full authentication flows, Firestore content collections, Cloud Functions, quiz data, or production content logic.
+- **Brand/icon direction:** Option C is the selected RichInsights direction; Penpot is the active design workspace, with Figma retained as reference.
+- **Launch experience:** the Compose brand intro is integrated and was tested on a physical Android device.
+- **Launch transition checkpoint:** PR #5 was squash-merged after user verification. The app shell is prepared behind the brand overlay; the unnecessary 500 ms post-tagline hold is removed and the final overlay fade is 180 ms.
+- **Design system and navigation:** current color tokens, typography, shapes, spacing, and the five-destination navigation shell are implemented in code. See `native-android-ui-ux.md` for the current source of truth.
+- **Firebase foundation:** project/configuration and Analytics dependency are present; successful build verification is recorded, while event delivery remains unverified. Authentication, Firestore rules/schema, and server functions remain future implementation work.
+- **Next step:** complete the Stage 1 documentation/build checkpoint, merge it, then begin **Stage 2 — Platform UI Foundation**. Do not restart completed foundation work or treat Firebase configuration as completion of the full backend.
 
-This identity checkpoint is sufficiently settled to resume the planned Stage 1 sequence. It does not invalidate Steps 1–4 or require the navigation shell to be rebuilt.
+The brand/launch checkpoint does not invalidate the existing design system or navigation shell, and neither needs to be rebuilt just to begin Stage 2.
 
 ### Stage 2 — Platform UI foundation
 - RichInsights visual system

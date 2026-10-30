@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "532606975582",
+    "project_id": "richinsights-v2",
+    "storage_bucket": "richinsights-v2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532606975582:android:0f2556d3ad87a17d4afecf",
+        "android_client_info": {
+          "package_name": "com.ricven.richinsights"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq0fpZYPPjFqVZMxFYn2VVuQIjkxuDOTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

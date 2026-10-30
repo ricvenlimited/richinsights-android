@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -10,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ricven.richinsights"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
@@ -34,6 +35,9 @@ dependencies {
     implementation(libs.androidxCoreSplashscreen)
     implementation(libs.androidxDataStorePreferences)
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAnalytics)
 
     debugImplementation(libs.androidxComposeUiTooling)
 }

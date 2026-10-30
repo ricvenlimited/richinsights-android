@@ -39,39 +39,28 @@ Avoid:
 
 ## 3. Visual identity
 
-RichInsights uses a **deep navy → intelligent blue → electric cyan → restrained gold** visual hierarchy.
+RichInsights uses a **Deep Navy → Intelligent Blue → Electric Cyan → restrained Gold** hierarchy. The values below match the current Android theme tokens in `ui/theme/Color.kt`; this implementation replaces the older palette values previously recorded here.
 
-### Brand palette
+### Current brand and UI tokens
 
-- **Deep Navy — `#102A43`**
-  - primary foundation for strong hierarchy, navigation, headings, and trusted brand surfaces.
-- **Intelligent Blue — `#1769E0`**
-  - principal action and learning color.
-- **Electric Cyan — `#19B5FE`**
-  - controlled signature accent for discovery, emphasis, interactive highlights, and selected modern details.
-- **Warm Gold — `#F4B942`**
-  - restrained achievement accent for points, streaks, milestones, certificates, and similar positive accomplishments.
+- **Deep Navy — `#0B2970`**: strong brand surfaces and the light theme's strong primary container.
+- **Intelligent Blue — `#1769E0`**: primary actions and the light theme's primary color.
+- **Electric Cyan — `#19B5FE`**: signature accent and the dark theme's primary color.
+- **Warm Gold — `#F4B942`**: restrained achievement accent.
+- **Standard surface / app canvas — `#FFFFFF`**.
+- **Pale-blue surface accent — `#E8F7FF`**.
+- **Outline — `#D9E2F2`**; **progress track — `#E3EAF7`**.
+- **Dark background — `#061332`**; **dark surface — `#0D1F49`**; **dark outline — `#1C3672`**.
+- **Primary text on light surfaces — `#0D0D0D`**; **body text — `#2C2C2C`**; **secondary text — `#565656`**.
+- **Text on strong/dark surfaces — `#FFFFFF`**; **secondary text on dark surfaces — `#B6BCC8`**.
+- **Success fill/icon — `#22A06B`**; **success text — `#167A4C`**.
+- **Light-theme error — `#C93B3B`**; **dark-theme error — `#FFB4AB`**.
 
-### Supporting UI palette
+### Theme behavior
 
-- **App canvas / standard surface — `#FFFFFF`**
-- **Pale-blue surface accent — `#E8F7FF`**
-- **Strong surface — Deep Navy, `#102A43`**
-- **Primary text — `#172033`**
-- **Secondary text — `#5B6474`**
-- **Success fill/icon — `#22A06B`**
-- **Success text — `#167A4C`**
-- **Error — `#C93B3B`**
+The app uses a light and dark Material 3 color scheme selected from the system theme. In the light scheme, Blue is primary, Cyan secondary, and Gold tertiary; in the dark scheme, Cyan is primary and Gold remains tertiary. Material 3 `surfaceTint` uses Blue in light mode and Cyan in dark mode. Compatibility aliases in the theme preserve existing component references.
 
-The main app canvas and standard Material surfaces use pure white. Pale-blue accent surfaces are reserved for components that need a distinct container treatment; spacing, outlines, and hierarchy should keep white cards legible on the white canvas. Material 3 `surfaceTint` is an elevation-tint role, not a pale background token, and maps to the primary blue.
-
-Semantic green and red are reserved primarily for success, confirmation, incorrect, warning/error, and validation states. Use the darker success token for small success text; the brighter success token remains available for suitable fills and icons. Cyan and gold remain signature accents, but should not be used for normal-sized text on white unless contrast is sufficient. Gold is not a general-purpose status color.
-
-The secondary text token is intentionally darker to improve contrast consistency across white and pale-blue surfaces. Contrast must be evaluated for each actual foreground/background pair; do not infer accessibility from token names alone.
-
-The palette should remain controlled. RichInsights should not become a rainbow-style educational app, and individual product sections should not introduce competing brand palettes.
-
-Final implementation tokens must be checked for contrast and accessibility before being treated as production-final.
+The palette should remain controlled; sections should not introduce competing brand palettes. Check real foreground/background combinations for contrast before treating the tokens as accessibility-verified. The values above document the current implementation, not a claim that every pair has passed a full contrast audit.
 
 ## 4. Native design foundation
 
@@ -94,6 +83,8 @@ The design system will establish:
 - reusable product components.
 
 Material 3 may provide underlying primitives, but RichInsights must have its own visual identity and token system.
+
+**Implemented foundation:** the current theme defines the light/dark color schemes, Plus Jakarta Sans typography, Material 3 shapes (8/12/16/20/28 dp), and shared spacing tokens (4/8/12/16/24/32/40 dp). The current token definitions in `ui/theme/Color.kt`, `Theme.kt`, and `Type.kt` are authoritative; keep this summary aligned when those files change.
 
 ## 5. Brand & Launch Identity
 
@@ -291,7 +282,9 @@ Use adaptive navigation appropriate to the available window size. Do not stretch
 
 ### Implementation checkpoint
 
-**Implemented in code; physical-device verification remains outstanding.** The current branch adds theme-derived icon tinting, applies status-bar padding to the profile control, retains Material 3 bottom-navigation inset handling, and adjusts the For You mark's rendered size. These changes are not considered device-verified until a debug build is installed and checked in both light and dark themes, including scrolling, cutouts, gesture navigation, and selected/unselected states.
+**Navigation shell implemented; full UI verification remains a Stage 2 quality task.** The current Compose shell uses Navigation 3 with five primary destinations, a separate Profile & Settings action, selected/unselected outline and filled icons, theme-derived colors, a fixed top bar and bottom navigation, status-bar padding, and system-aware content insets. The destination bodies are currently placeholders, not completed product screens.
+
+Before treating the shell as fully verified, test a debug build in light and dark themes, including scrolling, cutouts, gesture navigation, back behavior, selected/unselected states, and realistic screen sizes.
 
 ## 7. Home
 
@@ -439,6 +432,8 @@ Typography should provide:
 - clear scores and progress;
 - comfortable body text;
 - consistent hierarchy.
+
+The app-wide typography is implemented with bundled **Plus Jakarta Sans** fonts (Regular 400, SemiBold 600, Bold 700). Display/headline styles use Bold, titles use SemiBold, body styles use Regular, and label styles use SemiBold. Material 3 default sizes and line heights are retained for predictable scaling.
 
 Use normal native Compose rendering. Do not introduce unnecessary text-selection restrictions as a copy-prevention mechanism.
 
