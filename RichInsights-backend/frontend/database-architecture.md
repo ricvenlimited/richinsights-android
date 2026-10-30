@@ -127,6 +127,14 @@ Firebase is not being selected because it is the only technically possible solut
 
 The goal is not to maximize services. The goal is to establish a stable foundation that can grow.
 
+## 4A. Current Android Firebase implementation status
+
+The Android repository currently has the Firebase project configuration for `richinsights-v2`, the Google Services Gradle plugin, and the Firebase Analytics dependency. The latest recorded debug workflow passed and uploaded an APK artifact.
+
+This confirms build/configuration integration, **not** that Analytics events have been received by Firebase. Event delivery remains unverified.
+
+Firebase Authentication, Firestore collections/data models, Firestore Security Rules, Cloud Functions, Storage rules, and production backend operations remain architecture decisions or planned implementation work unless explicitly marked implemented elsewhere. Do not describe the Firebase foundation as a completed production backend. Implement and verify identity, authorization, and data access before storing real user data.
+
 ## 5. Firestore as the initial database
 
 **Cloud Firestore is the V2 database direction.**
@@ -1263,13 +1271,17 @@ The backend architecture maps to the roadmap as follows:
 - provider independence.
 
 ### Stage 1 — Native foundation
-- Firebase project/configuration only as required by the native foundation;
-- package identity `com.ricven.richinsights`.
+- Android Firebase project/configuration and Analytics dependency are present;
+- package identity `com.ricven.richinsights`;
+- successful debug build recorded; Analytics event delivery remains unverified;
+- Authentication, Firestore data/security rules, and Cloud Functions are not part of the completed foundation.
 
-### Stage 2 — UI foundation
-- explicit online/offline/connectivity states;
-- cached Home/Profile behavior;
-- offline Bible reader shell when its content model is ready.
+### Stage 2 — Platform UI foundation (next implementation stage)
+- reusable Compose components and consistent loading/error/empty/retry states;
+- explicit online/offline/connectivity presentation;
+- adaptive layouts and accessibility foundations;
+- Home/Learn/Quiz/Bible/News experience, without pretending backend-dependent data is already available;
+- keep UI contracts independent of unfinished authentication and Firestore implementation.
 
 ### Stage 3 — Content/domain contracts
 - domain models;
@@ -1372,6 +1384,8 @@ These are implementation/product decisions to be made when the relevant requirem
 20. Cost must be monitored as the platform grows.
 
 ## 41. Current authoritative backend status
+
+**Implementation checkpoint:** Android Firebase configuration and the Analytics dependency are present, and the recorded debug build passed. Analytics event delivery has not yet been independently verified. Authentication flows, Firestore schema/security rules, and production Cloud Functions remain unimplemented.
 
 - Backend direction: **Firebase-first**
 - Database: **Firestore**
