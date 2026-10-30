@@ -327,13 +327,51 @@ Current state:
 
 The brand/launch checkpoint does not invalidate the existing design system or navigation shell, and neither needs to be rebuilt just to begin Stage 2.
 
-### Stage 2 — Platform UI foundation
-- RichInsights visual system
-- reusable components
-- adaptive layouts
-- loading/error/empty states
-- accessibility foundations
-- Home/Learn/Quiz/Bible/News shell
+### Stage 2 — Platform UI and identity/data foundations
+
+Stage 2 is split into two ordered checkpoints. **Stage 2B is a dependency gate for any feature that requires a real user identity or protected user-owned data.** Do not build account-dependent screens or flows against placeholder authentication, unsecured client-side data, or assumptions about a backend that has not been established.
+
+#### Stage 2A — Platform UI foundation
+
+**Purpose:** establish the reusable, accessible Android presentation foundation without pretending that backend-dependent behavior is already functional.
+
+Scope:
+- RichInsights visual system and reusable Compose components;
+- adaptive layouts and navigation behavior;
+- accessibility foundations, including semantics, contrast, and font scaling;
+- consistent loading, error, empty, retry, offline, and unavailable states;
+- Home/Learn/Quiz/Bible/News presentation shell;
+- screen and interaction requirements for sign-in, account creation, and account-related entry points, where needed for coherent navigation and design.
+
+Exit criteria:
+- reusable UI components and documented usage patterns are in place;
+- core layouts and states are tested at realistic device sizes and accessibility settings;
+- account-related UI requirements are documented, but no fake sign-in or simulated authenticated state is presented as a working backend;
+- UI that depends on persistent identity or protected user data remains gated until Stage 2B is complete.
+
+#### Stage 2B — Firebase identity and user-data security foundation
+
+**Purpose:** establish the real identity, authorization, and data-access foundations before implementing features that depend on them.
+
+Scope:
+- confirm and document the supported sign-in/account-creation providers before implementation; provider choice is a decision gate, not an assumption;
+- implement Firebase Authentication flows for the approved providers, including sign-in, account creation, sign-out, session persistence, and appropriate recovery/error behavior;
+- define the initial Firestore model and ownership boundaries for identity-linked/user-owned data required by the next stages;
+- implement and test Firestore Security Rules and authorization boundaries; client-side checks alone are never security controls;
+- establish repository/data-source boundaries so Compose UI and ViewModels do not access Firebase directly;
+- define safe handling for authentication state changes, expired/invalid sessions, permission failures, network loss, retries, and account recovery;
+- establish relevant local persistence boundaries and ensure sensitive credentials/tokens are not stored insecurely;
+- verify the foundation with meaningful automated rules/auth tests and a debug build.
+
+Exit criteria:
+- approved authentication providers and account lifecycle behavior are documented and implemented;
+- authenticated identity is the basis for protected user-owned data access;
+- Firestore rules deny unauthorized access and are tested for both allowed and denied cases;
+- app data access goes through the agreed repository boundary;
+- loading, signed-out, signed-in, permission-denied, offline, and recoverable failure states are handled deliberately;
+- the user has tested the debug build before this checkpoint is considered complete.
+
+**Dependency rule:** features requiring accounts, persistent user identity, or protected user-owned data must not proceed on mock authentication or unsecured data access. If a later stage needs a new data contract or permission, define and secure that dependency before implementing the dependent feature. Stage 2B establishes the baseline; it does not mean every future Firestore collection or backend service must be built now.
 
 ### Stage 3 — Content/domain contracts
 - category/topic models
@@ -341,6 +379,7 @@ The brand/launch checkpoint does not invalidate the existing design system or na
 - provenance and validation metadata
 - quiz-session/result models
 - stable API contracts
+- identify any user-owned data contracts required by the quiz/history features and confirm their authorization requirements before dependent implementation
 
 ### Stage 4 — Quiz engine
 - session state
@@ -424,10 +463,12 @@ Represent the selected mode and its rules explicitly in the session/attempt doma
 
 
 ### Stage 5 — Backend/content integration
-- connect to the selected V2 backend/content services
-- network handling
-- content validation boundaries
-- provider-independent contracts
+- connect content and platform services to the established repository/data-source boundaries
+- implement the backend/content services required by the approved domain contracts
+- network handling and provider-independent contracts
+- server-side validation and authorization for protected operations
+- add service-specific Firestore/Storage rules and tests before exposing each new protected data path
+- do not treat Stage 2B as a substitute for the security design and tests required by later collections, functions, or services
 
 ### Stage 6 — History and freshness
 - local history persistence
@@ -452,9 +493,11 @@ Bring categories online incrementally:
 
 ### Stage 9 — News and broader platform features
 - News experience
-- progress/account foundations
+- expanded profile, progress, and account-dependent product features built on the identity/security foundation established in Stage 2B
 - future learning resources
 - additional educational modules
+
+**Sequencing clarification:** Stage 9 is for expanded account/profile/progress experiences—not the first implementation of Firebase Authentication, persistent identity, or the security foundation for user-owned data. Those prerequisites must be completed in Stage 2B before dependent features are built.
 
 ### Stage 10 — Commercial and release hardening
 - native AdMob
