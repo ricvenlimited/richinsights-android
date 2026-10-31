@@ -1160,24 +1160,23 @@ The architecture should avoid unnecessary “Firebase + Cloudflare + other servi
 
 ## 34. AI services
 
-AI can be used as an assistant inside the content pipeline.
+AI is a planned capability in RichInsights V2 in two distinct roles:
 
-Appropriate roles may include:
-- transforming verified facts into draft questions;
-- generating candidate distractors;
-- producing explanations;
-- generating legitimate variants;
-- classifying or normalizing content;
-- assisting editorial workflows.
+1. **Platform/content-pipeline assistance:** AI may help transform verified facts into draft questions, candidate distractors, explanations and legitimate variants; classify or normalize content; and assist editorial workflows.
+2. **Learner-facing product capabilities:** future AI-assisted experiences are intended for relevant parts of Learn, Quiz (including Bible Quiz where appropriate), News and selected Home experiences. Bible reading itself is not currently assumed to require AI.
 
-AI should not:
-- become the unquestioned source of factual truth;
-- publish unvalidated questions directly to learners;
-- replace provenance;
-- replace validation;
-- generate unlimited per-user quiz content without cost/quality controls.
+These are product intentions, not implemented features or a final provider decision. The specific use cases, UX, model/provider, data sources, grounding, privacy, safety, quality controls, cost limits, rate limits, fallback behavior and eligibility rules must be designed before implementation.
 
-The final AI provider is deliberately undecided.
+Architecture requirements:
+- Android must call a controlled backend boundary; private AI provider credentials must never be embedded in the app.
+- AI output must be grounded, validated and appropriately labeled where needed; AI is not the source of factual truth.
+- News and educational answers require source/provenance and freshness controls appropriate to the content.
+- AI must not publish unvalidated questions or factual claims directly to learners.
+- Avoid unlimited synchronous per-user generation; use caching, quotas, pre-generation or review pipelines where appropriate.
+- Provider outages, quota exhaustion, unsafe output and low-confidence results must have deliberate fallback/error behavior.
+- Do not couple Bible reading to AI availability; any Bible Quiz assistance remains a separate, later product decision.
+
+The final AI provider and feature-level architecture are deliberately undecided. Stage 2 should establish secure identity, repository and server-side integration boundaries only; it must not add end-user AI SDKs or ship learner-facing AI functionality.
 
 ## 35. API and domain contracts
 
@@ -1276,12 +1275,37 @@ The backend architecture maps to the roadmap as follows:
 - successful debug build recorded; Analytics event delivery remains unverified;
 - Authentication, Firestore data/security rules, and Cloud Functions are not part of the completed foundation.
 
-### Stage 2 — Platform UI foundation (next implementation stage)
-- reusable Compose components and consistent loading/error/empty/retry states;
-- explicit online/offline/connectivity presentation;
-- adaptive layouts and accessibility foundations;
-- Home/Learn/Quiz/Bible/News experience, without pretending backend-dependent data is already available;
-- keep UI contracts independent of unfinished authentication and Firestore implementation.
+### Stage 2 — Coordinated platform UI, identity and data-security foundation
+
+Stage 2 is executed through two coordinated workstreams, not as a strict sequence in which all UI work must finish before Firebase identity/security begins.
+
+**Stage 2A — Platform UI foundation**
+- preserve and extend the existing Compose design system and navigation shell;
+- reusable components, adaptive layouts/navigation and accessibility;
+- Home/Learn/Quiz/Bible/News presentation structures;
+- deliberate loading, empty, retryable error, offline, unavailable, signed-out and permission-denied states;
+- account screens and UI state contracts designed with the approved Auth lifecycle;
+- ViewModel/repository interfaces; no direct Firebase SDK calls from Compose.
+
+**Stage 2B — Firebase identity and user-data security**
+- inspect Firebase project environment, IAM, enabled services, billing and existing resources before making changes;
+- separate development and production configuration and test with emulators or an isolated development project;
+- decide supported Auth providers before implementation;
+- implement the approved Auth lifecycle and session/error handling;
+- define only the initial Firestore model/ownership boundaries needed by the next dependent features;
+- implement and test Firestore Security Rules, including unauthenticated, cross-user and unauthorized access cases;
+- establish repository/data-source boundaries and safe local persistence;
+- document agent permissions and require specific user authorization for live resource changes, deployments and destructive operations.
+
+**Shared integration and dependency gates**
+1. Agree on Auth state, repository contracts, result/error types and UI state models before connecting screens to backend behavior.
+2. Build reusable UI and Firebase Auth/Firestore security foundations in parallel where contracts are stable.
+3. Integrate account UI with real Firebase Auth; do not simulate authenticated success.
+4. Connect protected-data UI only after the corresponding Firestore model and rules exist and automated authorization tests pass.
+5. Verify unit/UI/Auth/Rules/integration tests, network-loss and permission-denied behavior, then run a debug build.
+6. The user must install and test the APK before the Stage 2 checkpoint is accepted. No PR, merge, live deployment or production promotion without explicit authorization.
+
+Stage 2 does not require every future Firestore collection, Cloud Function or product feature. Later stages must define and secure any new user-owned data contract before implementing the feature that depends on it. The Firebase Console Production environment label is not a substitute for IAM restrictions, separate environments or deployment approvals.
 
 ### Stage 3 — Content/domain contracts
 - domain models;
