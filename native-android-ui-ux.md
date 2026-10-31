@@ -594,44 +594,41 @@ Do not design every future screen before its requirements are known.
 
 ## 23. Design-tool workflow
 
-The RichInsights V2 design workflow uses **Penpot as the active editable design workspace** for continuing brand, icon, design-system, and UI/UX work.
+**Penpot is the active editable design workspace** for RichInsights V2 brand, icon, design-system and UI/UX work. Figma remains the reference/archive workspace for the existing **RichInsights — Brand & Icon Concepts** exploration and may be used later when appropriate. This tooling choice does not change the product identity or Android architecture.
 
-Figma remains the **reference/archive workspace** for the existing **RichInsights — Brand & Icon Concepts** file and may still be used later when appropriate. The move to Penpot is due to the connected Figma Starter/View MCP usage limitations that can interrupt continued design work. It does not change the RichInsights visual direction, product architecture, or implementation stages.
+## 24. Current V2 design and implementation status
 
-### Current brand work
+This section is the current status snapshot. Code is authoritative for what is implemented; this document records the product/design intent and known gaps.
 
-The existing Figma board contains:
-- Brand Direction;
-- Approved Color Direction;
-- six editable icon concept directions;
-- Selection & Production Path.
+### Brand and launch identity
+- **Option C** is the selected RichInsights brand/icon direction. The concept-selection decision is closed; do not reopen the six-way exploration without a concrete usability, production or legal reason.
+- The selected direction uses the established RichInsights visual hierarchy and the refined mark/wordmark treatment documented in the active Penpot source.
+- **Penpot** is the active editable design workspace; Figma is retained as reference/archive.
+- The Compose brand intro and launch-to-app transition are implemented and were tested on a physical Android device.
+- PR #5, **Fix brand intro to Home transition**, was squash-merged after user verification. The app shell is prepared behind the overlay; the unnecessary 500 ms post-tagline hold was removed and the final overlay fade is 180 ms.
+- Launcher asset/mask and small-size checks, plus trademark/name searches, remain validation tasks. They do not reopen the selected concept or invalidate the tested launch-flow implementation.
 
-The six exploratory directions are:
-1. Insight / Discovery
-2. Growth / Progress
-3. Learning / Knowledge
-4. RI Monogram
-5. Layered Information
-6. Refined Abstract
+### Implemented Android foundation
+- **SDK configuration:** `compileSdk 37`, `targetSdk 37`, **`minSdk 24`**, as configured in `app/build.gradle.kts`. Any older handoff/spec text stating minSdk 23 is superseded.
+- **Theme:** Material 3 light/dark color schemes are implemented. Current token values in `ui/theme/Color.kt` are authoritative; notably Deep Navy is `#0B2970`, Intelligent Blue `#1769E0`, Electric Cyan `#19B5FE`, and Warm Gold `#F4B942`.
+- **Typography:** bundled Plus Jakarta Sans Regular 400, SemiBold 600 and Bold 700 is wired into Material 3 typography; default Material 3 sizes/line heights are retained.
+- **Shapes and spacing:** shape tokens 8/12/16/20/28 dp and spacing tokens 4/8/12/16/24/32/40 dp are implemented.
+- **Navigation:** five primary destinations are present (Home, labelled “For You” in the current top-level UI, Learn, Quiz, Bible and News); Profile & Settings is a top-app-bar secondary/global action. Navigation 3 back-stack support is present.
+- **Destination content:** destination bodies are still placeholders. The shell must not be described as completed Home/Learn/Quiz/Bible/News experiences.
+- **Adaptive behavior:** the current navigation implementation uses a compact bottom navigation bar. Adaptive rail/large-window behavior remains Stage 2 work; do not describe it as implemented.
+- **Firebase:** Android project configuration and Analytics dependency are present, but Authentication, Firestore schema/rules, and server-backed content behavior are not part of the implemented UI foundation.
 
-These remain **exploration concepts only**. The **RI Monogram** is the leading refinement candidate, but no final RichInsights brand mark/icon has been approved.
+### Stage 2 design work
 
-### Active design → Android workflow
+Stage 2A UI work and Stage 2B identity/security work are coordinated rather than strictly sequential. UI design and reusable components may proceed against agreed interfaces while the Firebase identity/repository/security foundation is built. Account-dependent screens must reflect the real authentication lifecycle, and protected-data UI must not be wired to mock authentication or unsecured client-side data.
 
-The intended sequence is:
+The UI work must cover:
+- adaptive navigation and layouts for compact and expanded windows;
+- semantics, touch targets, contrast checks, TalkBack and font scaling;
+- deliberate loading, empty, retryable error, offline, unavailable, signed-out, signed-in and permission-denied states;
+- screen structures for the five primary product areas;
+- account creation, sign-in, recovery, sign-out and Profile & Settings flows aligned with the approved Stage 2B provider/lifecycle decisions;
+- ViewModel/repository contracts rather than direct Firebase access from Compose.
 
-**Explore/refine in Penpot → select/refine concept → finalize vector/brand assets → prepare adaptive-icon assets → integrate into Android → build/install → test on real devices → checkpoint**
-
-Figma remains available as a reference and possible later design tool. The design-tool change does not alter the existing navigation shell or backend architecture.
-
-## 23. Current V2 design status
-
-- **Option C** is the selected RichInsights brand/icon direction; concept selection is no longer pending.
-- **Penpot** is the active editable design workspace; the existing Figma file remains a reference/archive.
-- The Compose brand intro is implemented and has been verified on a physical Android device.
-- The verified launch transition prepares the navigation shell behind the brand overlay, removes the extra 500 ms post-tagline hold, and uses a 180 ms final fade so the app appears directly instead of exposing a blank Deep Navy frame.
-- PR #5, **Fix brand intro to Home transition**, was squash-merged after user verification.
-- The primary navigation shell remains **Home / Learn / Quiz / Bible / News** with Profile & Settings secondary/global.
-- Remaining icon asset/mask checks should be performed as part of the relevant launcher asset validation; they do not block the already-verified launch-flow checkpoint.
-- **Next roadmap step: Firebase foundation**, not full Home-screen design or implementation.
+The detailed execution sequence, shared integration gates and Stage 2 exit criteria are authoritative in `native-android-roadmap.md`.
 
