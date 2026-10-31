@@ -1,6 +1,11 @@
 package com.ricven.richinsights.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
@@ -76,7 +81,13 @@ fun RichInsightsNavigation() {
                         fontWeight = FontWeight.Bold,
                     )
                     IconButton(
-                        onClick = { backStack.add(RichInsightsDestination.Profile) },
+                        onClick = {
+                            // Profile is a single global destination; repeated taps must not
+                            // create duplicate copies on the back stack.
+                            if (backStack.lastOrNull() != RichInsightsDestination.Profile) {
+                                backStack.add(RichInsightsDestination.Profile)
+                            }
+                        },
                         modifier = Modifier.padding(end = 4.dp).size(48.dp),
                     ) {
                         Icon(
@@ -105,11 +116,23 @@ fun RichInsightsNavigation() {
                                 }
                             },
                             icon = {
-                                Icon(
-                                    painter = painterResource(if (selected) item.filledIconRes else item.outlineIconRes),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp),
-                                )
+                                // Match the UI specification: a restrained cyan-tinted
+                                // squircle sits behind the selected icon only, not its label.
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .background(
+                                            color = if (selected) colors.secondaryContainer else Color.Transparent,
+                                            shape = RoundedCornerShape(11.dp),
+                                        ),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(if (selected) item.filledIconRes else item.outlineIconRes),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                }
                             },
                             label = {
                                 Text(
@@ -136,6 +159,20 @@ fun RichInsightsNavigation() {
             backStack = backStack,
             modifier = Modifier.fillMaxSize().padding(paddingValues),
             onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+            // Navigation should feel calm and immediate: no directional movement between
+            // destinations, including when returning through system or predictive back.
+            transitionSpec = {
+                fadeIn(animationSpec = tween(durationMillis = 180)) togetherWith
+                    fadeOut(animationSpec = tween(durationMillis = 180))
+            },
+            popTransitionSpec = {
+                fadeIn(animationSpec = tween(durationMillis = 180)) togetherWith
+                    fadeOut(animationSpec = tween(durationMillis = 180))
+            },
+            predictivePopTransitionSpec = { _ ->
+                fadeIn(animationSpec = tween(durationMillis = 180)) togetherWith
+                    fadeOut(animationSpec = tween(durationMillis = 180))
+            },
             entryProvider = { key ->
                 when (key) {
                     is RichInsightsDestination -> NavEntry(key) { Box(Modifier.fillMaxSize()) }
