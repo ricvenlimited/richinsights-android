@@ -251,127 +251,135 @@ Requirements:
 Product identity, V2 reset principle, navigation, architecture boundaries, content/question requirements, and major quality requirements are documented.
 
 ### Stage 1 — Native application foundation
-**Status: foundation implemented; Firebase verification and final checkpoint remain in progress.**
+**Status: foundation implemented and checkpointed; one non-blocking Analytics verification item remains.**
 
-The native project, Gradle/Compose setup, initial design system, navigation shell, Firebase Android configuration, and debug-build checkpoint are in place. The remaining work is to finish the foundation checkpoint without implying that full backend services are already implemented.
+Stage 1 established the native Android application, initial design system, primary navigation shell, RichInsights launch identity, and initial Firebase Android configuration. It is not a claim that the full Firebase backend or production data services are implemented.
 
-#### Stage 1 execution status
+#### Stage 1 implementation record
 
-1. **Native Android project — complete**
-   - Kotlin + Jetpack Compose
-   - application/package identity: `com.ricven.richinsights`
-   - native Android project structure
+1. **Native Android project — implemented**
+   - Kotlin + Jetpack Compose;
+   - application/package identity: `com.ricven.richinsights`;
+   - native Android project structure.
 
-2. **Gradle/project foundation — complete**
-   - Gradle and SDK configuration
-   - dependency management
-   - Compose/build configuration
+2. **Gradle and SDK foundation — implemented**
+   - Gradle, SDK, dependency and Compose configuration are present;
+   - the current app module configuration is authoritative: `compileSdk 37`, `targetSdk 37`, **`minSdk 24`**;
+   - older design/splash handoff notes that state `minSdk 23` are superseded by the current Gradle configuration and must not be used to infer API 23 support.
 
-3. **Initial RichInsights design system — implemented**
-   - theme and brand color tokens
-   - Plus Jakarta Sans typography
-   - Material 3 shape and spacing tokens
-   - light/dark color schemes
-   - detailed visual decisions are recorded in `native-android-ui-ux.md`
+3. **RichInsights design system — implemented foundation**
+   - Material 3 light/dark color schemes;
+   - current brand color tokens;
+   - bundled Plus Jakarta Sans (400/600/700);
+   - Material 3 shape tokens (8/12/16/20/28 dp);
+   - shared spacing tokens (4/8/12/16/24/32/40 dp).
+   - See `native-android-ui-ux.md` and the theme source files for the current implementation.
 
-4. **Navigation shell — implemented**
-   - For You / Learn / Quiz / Bible / News
-   - Profile & Settings remains a separate global action
-   - current destination shell and navigation behavior are implemented; destination content remains placeholder-level
+4. **Primary navigation shell — implemented**
+   - Home (currently labelled “For You” in the top-level UI) / Learn / Quiz / Bible / News;
+   - Profile & Settings is a secondary/global top-app-bar action;
+   - Navigation 3 back-stack foundation is present;
+   - destination bodies remain placeholders; adaptive navigation for larger windows and full destination experiences are Stage 2 work.
 
-5. **Firebase foundation — configured; end-to-end verification pending**
-   - Firebase project `richinsights-v2`
-   - Android package registered as `com.ricven.richinsights`
-   - Google Services Gradle plugin and Firebase configuration present
-   - Firebase Analytics dependency included
-   - successful debug build confirms the project compiles; Analytics event delivery has not yet been independently verified
-   - Firebase Authentication flows, Firestore schema/security rules, Cloud Functions, and production content logic are **not implemented by this foundation step**
+5. **Brand and launch identity — implemented checkpoint**
+   - Option C is the selected brand/icon direction; concept selection is closed unless a concrete usability or production issue justifies revisiting it;
+   - Penpot is the active editable design workspace; Figma remains reference/archive;
+   - Compose brand intro and launch-to-app transition were installed and tested on a physical Android device;
+   - PR #5 was squash-merged after user verification; the extra post-tagline hold was removed and the final overlay fade is 180 ms;
+   - remaining launcher asset/mask, small-size, and trademark checks are validation tasks, not reasons to reopen concept selection.
 
-6. **Debug build checkpoint — passed**
-   - latest recorded debug workflow completed successfully and uploaded an APK artifact
-   - the user has previously installed and tested the launch experience; new UI/theme changes still require their own appropriate device verification
+6. **Initial Firebase Android configuration — present**
+   - Firebase project configuration for `richinsights-v2`;
+   - Android package registration and Google Services Gradle plugin;
+   - Firebase Analytics dependency;
+   - recorded debug build passed.
+   - Analytics event delivery has not yet been independently verified. Authentication flows, Firestore schema/security rules, Storage rules, Cloud Functions and production backend operations are not implemented by Stage 1.
 
-7. **GitHub checkpoint — branch available**
-   - current work is on `codex/stage-1-firebase-foundation`
-   - documentation changes should be reviewed and merged before creating the next implementation branch
+7. **Build and user verification**
+   - the recorded Stage 1 debug workflow passed and produced an APK artifact;
+   - the launch experience was tested by the user on a physical device;
+   - future implementation changes still require their own debug build and user testing.
 
-8. **Stage 1 checkpoint — documentation handoff in progress**
-   - keep the foundation buildable
-   - finish and review the documentation update
-   - merge the approved checkpoint
-   - proceed to Stage 2
+#### Stage 1 closeout
 
-#### Brand & Launch Identity checkpoint inserted before Firebase implementation
+The native foundation and initial Firebase configuration are sufficient to proceed to Stage 2. Analytics event-delivery verification remains a tracked, non-blocking follow-up and must be completed before treating Analytics as operationally verified. Do not restart completed native, design-system, navigation, or launch work merely to begin Stage 2.
 
-The product identity work was identified as important before moving into Firebase integration. It does **not** replace or restructure the navigation shell.
+### Stage 2 — Coordinated platform UI, identity and data-security foundation
 
-The identity work covers:
-- RichInsights brand mark/symbol;
-- launcher/app icon direction;
-- adaptive icon requirements;
-- `Grow. Excel.` tagline usage;
-- Android launch/splash experience;
-- Design-tool-based visual exploration and editable design assets.
+**Status: planned; execution has not yet begun.** The current working branch, `codex/stage-2-platform-ui-foundation`, is the documentation and implementation starting point for this stage.
 
-**Design-tool transition note:** Figma remains the reference/archive workspace for the existing **RichInsights — Brand & Icon Concepts** exploration. Because the connected Figma Starter/View setup imposes MCP usage limits that can interrupt the planned workflow, **Penpot is now the active design workspace for continuing the brand/launch work and subsequent UI/UX design work**. This is a workflow change, not a product or architecture change. The existing Figma work is preserved and may still be used later.
+Stage 2 contains two coordinated workstreams, not two isolated phases that must be completed one after the other:
 
-The brand/launch checkpoint is complete and the Firebase Android foundation is now configured. The remaining Stage 1 work is verification and checkpointing, not restarting the earlier steps.
+- **Stage 2A — Platform UI foundation**
+- **Stage 2B — Firebase identity and user-data security foundation**
 
-Current state:
-- **Brand/icon direction:** Option C is the selected RichInsights direction; Penpot is the active design workspace, with Figma retained as reference.
-- **Launch experience:** the Compose brand intro is integrated and was tested on a physical Android device.
-- **Launch transition checkpoint:** PR #5 was squash-merged after user verification. The app shell is prepared behind the brand overlay; the unnecessary 500 ms post-tagline hold is removed and the final overlay fade is 180 ms.
-- **Design system and navigation:** current color tokens, typography, shapes, spacing, and the five-destination navigation shell are implemented in code. See `native-android-ui-ux.md` for the current source of truth.
-- **Firebase foundation:** project/configuration and Analytics dependency are present; successful build verification is recorded, while event delivery remains unverified. Authentication, Firestore rules/schema, and server functions remain future implementation work.
-- **Next step:** complete the Stage 1 documentation/build checkpoint, merge it, then begin **Stage 2 — Platform UI Foundation**. Do not restart completed foundation work or treat Firebase configuration as completion of the full backend.
+The workstreams should proceed in parallel where their contracts are clear and converge at defined integration gates. Neither workstream may invent or simulate the responsibilities of the other. UI can be designed and built against explicit state/repository interfaces while Firebase identity and authorization are implemented; protected, account-dependent behavior must not be presented as functional until its Stage 2B dependency is real and tested.
 
-The brand/launch checkpoint does not invalidate the existing design system or navigation shell, and neither needs to be rebuilt just to begin Stage 2.
+#### 2A — Platform UI foundation
 
-### Stage 2 — Platform UI and identity/data foundations
-
-Stage 2 is split into two ordered checkpoints. **Stage 2B is a dependency gate for any feature that requires a real user identity or protected user-owned data.** Do not build account-dependent screens or flows against placeholder authentication, unsecured client-side data, or assumptions about a backend that has not been established.
-
-#### Stage 2A — Platform UI foundation
-
-**Purpose:** establish the reusable, accessible Android presentation foundation without pretending that backend-dependent behavior is already functional.
+**Purpose:** complete the reusable, accessible Compose presentation foundation and prepare the core product areas for real data and identity integration.
 
 Scope:
-- RichInsights visual system and reusable Compose components;
-- adaptive layouts and navigation behavior;
-- accessibility foundations, including semantics, contrast, and font scaling;
-- consistent loading, error, empty, retry, offline, and unavailable states;
-- Home/Learn/Quiz/Bible/News presentation shell;
-- screen and interaction requirements for sign-in, account creation, and account-related entry points, where needed for coherent navigation and design.
+- audit and extend the existing theme, tokens and reusable Compose components; preserve working Stage 1 foundations;
+- implement adaptive navigation/layout behavior for compact phones, larger phones, tablets, foldables, landscape and resizable windows;
+- accessibility: semantics, focus/navigation behavior, touch targets, contrast verification, TalkBack and font scaling;
+- shared UI state patterns for loading, content, empty, retryable error, permission-denied, offline, service-unavailable and signed-out states;
+- establish the presentation shells and interaction requirements for Home, Learn, Quiz, Bible and News;
+- design account entry, sign-in, account creation, recovery and Profile & Settings experiences in coordination with the approved authentication lifecycle;
+- define screen-level UI state contracts and ViewModel boundaries without wiring Compose directly to Firebase SDKs;
+- test important layouts at realistic device sizes and accessibility settings.
 
 Exit criteria:
-- reusable UI components and documented usage patterns are in place;
-- core layouts and states are tested at realistic device sizes and accessibility settings;
-- account-related UI requirements are documented, but no fake sign-in or simulated authenticated state is presented as a working backend;
-- UI that depends on persistent identity or protected user data remains gated until Stage 2B is complete.
+- reusable components and documented usage patterns are implemented;
+- adaptive navigation and core layouts are verified on representative window sizes;
+- accessibility checks cover semantics, touch targets, contrast and font scaling;
+- core product destinations have intentional screen structures and state handling rather than empty placeholder bodies;
+- account-related screens match the approved Stage 2B lifecycle and do not simulate successful authentication;
+- UI is connected through ViewModels/repository contracts, not direct Firebase calls.
 
-#### Stage 2B — Firebase identity and user-data security foundation
+#### 2B — Firebase identity and user-data security foundation
 
-**Purpose:** establish the real identity, authorization, and data-access foundations before implementing features that depend on them.
+**Purpose:** establish real identity, authorization and safe data access in parallel with the UI contracts that depend on them.
 
 Scope:
-- confirm and document the supported sign-in/account-creation providers before implementation; provider choice is a decision gate, not an assumption;
-- implement Firebase Authentication flows for the approved providers, including sign-in, account creation, sign-out, session persistence, and appropriate recovery/error behavior;
-- define the initial Firestore model and ownership boundaries for identity-linked/user-owned data required by the next stages;
-- implement and test Firestore Security Rules and authorization boundaries; client-side checks alone are never security controls;
-- establish repository/data-source boundaries so Compose UI and ViewModels do not access Firebase directly;
-- define safe handling for authentication state changes, expired/invalid sessions, permission failures, network loss, retries, and account recovery;
-- establish relevant local persistence boundaries and ensure sensitive credentials/tokens are not stored insecurely;
-- verify the foundation with meaningful automated rules/auth tests and a debug build.
+- inspect and document the actual Firebase project/environment, enabled services, IAM roles, billing state and existing resources before changing anything;
+- establish development/production environment separation and environment-specific Android configuration; use Firebase Emulator Suite or an isolated development project for tests;
+- define the agent/automation permission policy: read/prepare by default; explicit approval for resource changes; no production deployment or destructive operation without specific authorization;
+- decide the initial sign-in/account-creation providers before implementation; provider selection is a decision gate, not an assumption;
+- implement Firebase Authentication lifecycle for approved providers: sign-in, account creation, sign-out, session restoration, account linking/recovery where required, and clear failure handling;
+- define the minimum initial Firestore model and ownership boundaries needed by Stage 2 and the next dependent features; do not prebuild every future collection;
+- implement Firestore Security Rules and tests for allowed, denied, cross-user and unauthenticated access;
+- define repository/data-source boundaries so Compose and ViewModels do not call Firebase directly;
+- handle auth-state changes, invalid/expired sessions, permission failures, network loss, retries and recoverable errors;
+- establish safe local persistence boundaries; never store passwords or private provider credentials in app preferences;
+- plan App Check and protected server-side operations at the appropriate point; do not treat client checks as authorization;
+- verify with Auth/Rules tests, emulator or isolated-project integration tests, and a debug build.
 
 Exit criteria:
-- approved authentication providers and account lifecycle behavior are documented and implemented;
+- the approved provider set and account lifecycle are documented and implemented;
 - authenticated identity is the basis for protected user-owned data access;
-- Firestore rules deny unauthorized access and are tested for both allowed and denied cases;
-- app data access goes through the agreed repository boundary;
-- loading, signed-out, signed-in, permission-denied, offline, and recoverable failure states are handled deliberately;
-- the user has tested the debug build before this checkpoint is considered complete.
+- Firestore rules enforce ownership and deny unauthorized access, with automated positive and negative tests;
+- all app data access uses the agreed repository boundary;
+- signed-out, signed-in, loading, permission-denied, offline and recoverable-failure states are handled deliberately;
+- development/production configuration and the no-unapproved-deployment policy are documented;
+- the user has installed and tested the debug APK before the Stage 2 checkpoint is accepted.
 
-**Dependency rule:** features requiring accounts, persistent user identity, or protected user-owned data must not proceed on mock authentication or unsecured data access. If a later stage needs a new data contract or permission, define and secure that dependency before implementing the dependent feature. Stage 2B establishes the baseline; it does not mean every future Firestore collection or backend service must be built now.
+#### Shared 2A/2B integration plan and dependency gates
+
+1. **Discovery and contracts:** inspect the existing UI/navigation and Firebase project; decide account requirements/providers and identify the first user-owned data needs. Record decisions before implementation.
+2. **Parallel foundations:** build reusable UI/state components and the Auth/Firestore security foundation in parallel. Agree on interfaces first: authentication state, repository contracts, result/error types and loading/permission/offline states.
+3. **Account-flow integration:** implement the account UI against the real Auth repository; verify signed-out/signed-in transitions, session restoration, sign-out and failure/recovery paths.
+4. **Protected-data integration:** only after the corresponding Firestore model and rules exist and pass tests, connect the relevant repository and UI. No mock-auth or client-only authorization shortcut.
+5. **End-to-end verification:** run unit, UI, Auth and Firestore Rules tests; test network loss and permission failures; run the debug workflow; inspect the APK and wait for user testing.
+6. **Checkpoint:** review the actual code, rules, tests, configuration and documentation together. Do not open a PR, merge, deploy or promote an environment without the user's explicit authorization.
+
+#### Stage 2 boundaries
+
+- Stage 2 establishes identity, baseline authorization and repository boundaries; it does not implement all future user-data collections or every backend service.
+- Stage 3 content/domain contracts must define and secure any new user-owned data dependency before dependent features are implemented.
+- No AI provider or end-user AI feature is selected or implemented in Stage 2. Stage 2 should preserve a secure server-side integration boundary so future AI features can be added without exposing provider keys or calling privileged providers directly from Android.
+- Future AI-assisted capabilities are planned across relevant product areas (including Learn, Quiz/Bible Quiz, News and selected Home experiences), but their product requirements, sources, safety/quality controls, provider choice, usage limits and backend contracts belong to later design and implementation decisions. Bible reading itself is not assumed to require AI.
+- Firebase Console's Production environment label is a warning/identification aid, not an access-control or deployment-approval mechanism. IAM permissions, environment separation, tooling approvals and deployment controls remain necessary.
 
 ### Stage 3 — Content/domain contracts
 - category/topic models
@@ -525,12 +533,11 @@ V2 succeeds when RichInsights has a maintainable native Android foundation with:
 
 **V2 is an educational platform foundation — not V1 rebuilt with a new UI.**
 
-### Current Stage 1 checkpoint
+### Current project checkpoint
 
-The native project, Gradle foundation, initial design system, and navigation shell are established. The Brand & Launch Identity checkpoint is now sufficiently settled to resume Stage 1 Step 5:
-- selected brand direction: option C;
-- Compose brand intro implemented and physically device-tested;
-- PR #5, **Fix brand intro to Home transition**, squash-merged after user verification;
-- app navigation is composed behind the brand overlay; the extra post-tagline hold was removed and the final fade shortened to 180 ms to avoid a blank navy pause.
-
-**Next action: Firebase foundation.** Create/connect the RichInsights Firebase project, register com.ricven.richinsights, configure Firebase in Android, and verify the connection with a minimal test. Keep authentication flows, Firestore content collections, Cloud Functions, quiz data, and production content logic out of scope for this initial Firebase connection checkpoint. After implementation, build, install, test, document, and checkpoint before proceeding.
+- **Current working branch:** `codex/stage-2-platform-ui-foundation`.
+- **Stage 1:** native Android foundation, design-system foundation, navigation shell, launch identity and initial Firebase Android configuration are in place. The recorded Stage 1 debug build passed. Analytics event delivery remains unverified and is a non-blocking verification follow-up.
+- **Current Android SDK configuration:** `compileSdk 37`, `targetSdk 37`, `minSdk 24` in `app/build.gradle.kts`. This supersedes older handoff/spec references to minSdk 23.
+- **Brand direction:** Option C is selected; Penpot is active and Figma is retained as reference/archive.
+- **Stage 2:** documentation is being finalized on the current working branch. No Stage 2 implementation or Firebase Auth/Firestore security work is claimed complete.
+- **Next action:** complete the coordinated 2A/2B documentation and discovery, inspect the live Firebase environment and agent permissions, then begin implementation through explicit UI/backend contracts.
