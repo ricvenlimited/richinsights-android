@@ -1179,6 +1179,40 @@ AI should not:
 
 The final AI provider is deliberately undecided.
 
+### 34A. Pinecone vector search and semantic retrieval
+
+**Decision: Pinecone is selected for planned future use in RichInsights V2.** The user has created a Pinecone account. This is an architectural decision and planning commitment; it does **not** mean that Pinecone is connected, provisioned, populated, or used by the application yet.
+
+Pinecone will complement—not replace—the Firebase-first architecture:
+- **Cloud Firestore remains the primary application database and authoritative source of truth** for canonical question/content records, user data, progress, quiz history, and transactional application state.
+- **Pinecone is the planned vector-search layer** for semantic similarity and retrieval over approved educational content and other explicitly approved knowledge sources.
+- Vector records should retain stable references to their canonical Firestore/content records. Retrieved matches must be resolved against and checked against the authoritative record before being used in learner-facing or consequential workflows.
+- Pinecone must not become the only copy of approved questions, explanations, provenance, user records, or other important application data.
+
+Planned use cases include:
+- meaning-based search across approved quiz questions, topics, explanations, and learning resources;
+- retrieval of related questions or educational material even when wording differs;
+- candidate similarity retrieval to support question-family discovery and near-duplicate review;
+- context retrieval for a future AI learning assistant, with answers grounded in approved, traceable source material;
+- relevant-content retrieval for future learning recommendations where product requirements justify it.
+
+### Integration and quality boundaries
+
+- Access Pinecone through trusted server-side backend code (initially the Firebase/Python Cloud Functions boundary where appropriate); never connect to Pinecone directly from the Android client.
+- Keep Pinecone credentials in protected backend secrets/Secret Manager. Never commit credentials or embed them in the Android application.
+- Index only content approved for the relevant retrieval purpose. Do not place private learner data, credentials, or unnecessary personal information into vector metadata.
+- Preserve source/provenance, canonical record references, content lifecycle/approval status, and appropriate metadata filters so retrieval can respect content permissions and status.
+- Treat similarity results as candidates, not proof of factual correctness or definitive duplicate decisions. Existing validation, question-family rules, provenance checks, and server-side authorization remain authoritative.
+- Select and version the embedding model, vector dimensions, index configuration, metadata schema, namespaces, update/deletion strategy, and retrieval thresholds during implementation. The embedding model/provider is not decided by selecting Pinecone.
+- Plan for indexing retries, stale/deleted source records, re-indexing, provider outages, rate limits, latency, observability, and graceful fallback to supported Firestore queries or other safe application behavior.
+- Monitor storage, read/write/query usage, embedding-generation costs, and total operating cost. Start with the account's available free allowance where suitable; do not introduce paid usage without reviewing actual requirements and cost.
+- Keep Pinecone behind an internal retrieval interface so the application and domain logic are not coupled to Pinecone-specific APIs.
+
+### Delivery status
+
+**Planned — not implemented.** Do not add Pinecone SDKs, credentials, indexes, embedding jobs, or runtime dependencies as part of the initial Firebase foundation. Revisit implementation after the relevant content/domain contracts and an approved initial corpus are ready, and verify that semantic retrieval provides measurable value before expanding its scope.
+
+
 ## 35. API and domain contracts
 
 The Android client should depend on stable V2 domain contracts rather than raw provider payloads.
@@ -1343,8 +1377,9 @@ Do not invent final decisions for:
 - exact Firebase data schema;
 - exact Firestore collection names;
 - exact Cloud Function names/routes;
-- exact provider mix;
-- exact AI provider;
+- exact external content-provider mix;
+- exact AI model/provider;
+- Pinecone implementation details (embedding model/version, index configuration, metadata schema, namespaces, retrieval thresholds, and synchronization strategy);
 - fallback-provider policy per category;
 - final Bible translation/licensing choice;
 - exact synchronization algorithm;
@@ -1382,6 +1417,7 @@ These are implementation/product decisions to be made when the relevant requirem
 18. Commercial entitlements must be centralized.
 19. Security rules must be enforced server-side.
 20. Cost must be monitored as the platform grows.
+21. Pinecone is the selected future vector-search/semantic-retrieval service; it complements Firestore and does not replace the authoritative database.
 
 ## 41. Current authoritative backend status
 
@@ -1400,6 +1436,7 @@ These are implementation/product decisions to be made when the relevant requirem
 - SQL Connect/PostgreSQL: **deferred**
 - Cloudflare: **not required initially**
 - AI: **optional assistant within a validated content pipeline**
+- Pinecone: **selected for planned future semantic/vector retrieval; account created by the user; integration and provisioning not yet implemented**
 - Connectivity: **online-first / internet-required for most live platform functionality**
 - V1 Cloudflare Worker and V1 question/API/AdMob systems: **reference/prototype only, not V2 production dependencies**
 
