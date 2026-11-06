@@ -94,6 +94,8 @@ The current V2 backend direction is **Firebase-first**:
 
 SQL Connect/PostgreSQL is deliberately deferred. Cloudflare is not required for V2 initially and the V1 Cloudflare Worker remains a prototype/reference rather than the V2 foundation.
 
+**Pinecone is selected as a planned future vector-search service for RichInsights V2.** It will complement Firestore by supporting semantic retrieval over approved educational content and other explicitly approved knowledge sources—for example, meaning-based quiz/content search, related-content retrieval, and context retrieval for a future AI learning assistant. Firestore remains the authoritative source for canonical records and application state; Pinecone stores searchable vector representations and references/metadata, not the only copy of important content. Pinecone integration is a later backend/content capability, not a prerequisite for the current native app foundation or initial Firebase setup. The detailed decision and security boundaries are recorded in `RichInsights-backend/frontend/database-architecture.md`.
+
 RichInsights is **online-first**, not broadly offline-first. Selected Home/Profile data may be cached, explicitly downloaded Learn content may work offline, and properly licensed Bible reading is intended to work offline. Quiz, News, Current Affairs, fresh Learn browsing/downloads, synchronization, and server-backed Bible features require internet.
 
 The detailed backend, security, content-pipeline, connectivity, cost-control, Firebase, Cloudflare, and infrastructure decisions are maintained in **`RichInsights-backend/frontend/database-architecture.md`**. That document is authoritative for detailed backend architecture.
@@ -425,9 +427,12 @@ Represent the selected mode and its rules explicitly in the session/attempt doma
 
 ### Stage 5 — Backend/content integration
 - connect to the selected V2 backend/content services
+- establish the planned Pinecone vector-search integration when the content contracts and approved dataset are ready
 - network handling
 - content validation boundaries
 - provider-independent contracts
+
+Pinecone integration is planned work within the later backend/content phase; it does not block the current Firebase foundation or earlier app stages.
 
 ### Stage 6 — History and freshness
 - local history persistence
